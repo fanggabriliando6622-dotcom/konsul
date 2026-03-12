@@ -1,6 +1,5 @@
 FROM dunglas/frankenphp:php8.4
 
-# Install PHP extensions
 RUN install-php-extensions \
     intl \
     zip \
@@ -9,17 +8,17 @@ RUN install-php-extensions \
     curl \
     dom \
     fileinfo \
-    openssl
+    openssl \
+    tokenizer \
+    xml
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
 COPY . .
 
-# Install Laravel dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
-# Start Laravel
 CMD php artisan serve --host=0.0.0.0 --port=$PORT
