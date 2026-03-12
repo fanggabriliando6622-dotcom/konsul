@@ -1,24 +1,61 @@
-FROM dunglas/frankenphp:php8.4
+FROM php:8.3-cli
 
-RUN install-php-extensions \
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    libicu-dev \
+    zip \
+    unzip
+
+# Install PHP extensions
+RUN docker-php-ext-configure intl && \
+    docker-php-ext-install \
     intl \
     zip \
     pdo_mysql \
     mbstring \
-    curl \
-    dom \
-    fileinfo \
-    openssl \
-    tokenizer \
-    xml
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    opcache
 
 # Install composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Set working directory
 WORKDIR /app
 
+# Copy composer files first for better caching
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-scripts \
+    --no-interaction
+
+# Copy application files
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+# Set proper permissions
+RUN mkdir -p storage/framework/sessions \
+    storage/framework/views \
+    storage/framework/cache \
+    bootstrap/cache && \
+    chmod -R 777 storage bootstrap/cache
 
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+# Run post-install scripts
+RUN php artisan package:discover --ansi
+
+# Expose port
+EXPOSE 8000
+
+# Start Laravel
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
