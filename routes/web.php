@@ -182,5 +182,15 @@ Route::post('/chatbot/send',
     [ChatbotController::class, 'send']
 )->name('chatbot.send');
 
+Route::get('/artikel/kesehatan-investasi', [LandingController::class, 'ksinvestasi'])->name('artikel.ksinvestasi');
 
+Route::get('/artikel/kesehatan-ditanganmu', [LandingController::class, 'ksditanganmu'])->name('artikel.ksditanganmu');
+
+Route::get('/artikel/tubuh-sehat', [LandingController::class, 'tubuhsehat'])->name('artikel.tubuhsehat');
+
+Route::get('/artikel/kesehatan-tubuh-mental', [LandingController::class, 'kstubuhmental'])->name('artikel.kstubuhmental');
+
+Route::get('/artikel/nutrisi', [LandingController::class, 'nutrisi'])->name('artikel.nutrisi');
+Route::get('/artikel/mental', [LandingController::class, 'mental'])->name('artikel.mental');
+Route::get('/artikel/gaya', [LandingController::class, 'gaya'])->name('artikel.gaya');
 

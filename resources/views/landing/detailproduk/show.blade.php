@@ -1,137 +1,381 @@
 @extends('layouts.app')
 
 @section('title', $kategori->kategoriName . ' | RuangKonsul')
-@section('meta_description', 'RuangKonsul - ' . $kategori->kategoriName)
+@section('meta_description', 'RuangKonsul - Jelajahi koleksi ' . $kategori->kategoriName . ' berkualitas untuk kesehatan Anda.')
 
 @section('content')
 
-<section class="detail-page-header">
-  <div class="container">
-    <h1>{{ $kategori->kategoriName }}</h1>
-    <span class="badge bg-primary">
-      {{ $produks->count() }} Produk Tersedia
-    </span>
-  </div>
+@push('styles')
+<style>
+    :root {
+        --rk-primary: #223a66;
+        --rk-accent: #e12454;
+        --rk-success: #28a745;
+        --rk-warning: #ffc107;
+        --rk-bg-light: #f8fafd;
+    }
+
+    /* --- Hero Section Refinement --- */
+    .rk-hero {
+        padding: 80px 0 120px !important; /* Menaikkan posisi agar tidak terlalu rendah */
+        position: relative;
+    }
+
+    .rk-hero-inner {
+        margin-top: -30px; /* Menarik konten teks ke arah atas */
+    }
+
+    /* --- Breadcrumbs --- */
+    .breadcrumb-rk {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    .breadcrumb-item-rk {
+        color: rgba(255,255,255,0.7);
+        font-size: 13px;
+    }
+    .breadcrumb-item-rk a {
+        color: white;
+        text-decoration: none;
+        opacity: 0.8;
+    }
+    .breadcrumb-item-rk a:hover {
+        opacity: 1;
+    }
+    .breadcrumb-item-rk.active {
+        color: white;
+        font-weight: 700;
+    }
+
+    /* --- Product Card Premium --- */
+    .product-card-premium {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: none !important;
+        box-shadow: 0 10px 30px rgba(34,58,102,0.05) !important;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        display: flex;
+        flex-direction: column; /* Memperbaiki typo flex-column */
+    }
+    
+    .product-card-premium:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(34,58,102,0.12) !important;
+    }
+
+    /* --- Perbaikan Container Gambar --- */
+    .product-image-container {
+        position: relative;
+        overflow: hidden;
+        height: 240px;
+        display: flex;             /* Memastikan gambar di tengah secara flexbox */
+        align-items: center;       /* Center vertikal */
+        justify-content: center;    /* Center horizontal */
+        background: #ffffff;        /* Background netral agar gambar terlihat jelas */
+        padding: 20px;             /* Memberi ruang agar gambar tidak menempel tepi */
+    }
+    
+    .product-image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;       /* Gambar menyesuaikan kotak tanpa terpotong (contain) */
+        transition: transform 0.6s ease;
+    }
+    
+    .product-card-premium:hover .product-image-container img {
+        transform: scale(1.1);
+    }
+
+    /* --- Badges --- */
+    .badge-stock-rk {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 5;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .badge-in-stock { background: var(--rk-success); color: white; }
+    .badge-low-stock { background: var(--rk-warning); color: #333; }
+    .badge-out-of-stock { background: #6c757d; color: white; }
+
+    /* --- Card Body --- */
+    .product-body-premium {
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .product-category-label {
+        color: var(--rk-accent);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .product-name-rk {
+        color: var(--rk-primary);
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 12px;
+        line-height: 1.4;
+        min-height: 50px;
+    }
+
+    .product-price-rk {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--rk-primary);
+        margin-bottom: 5px;
+    }
+
+    .product-stock-text {
+        font-size: 13px;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    /* --- Buttons --- */
+    .product-actions-rk {
+        display: flex;
+        gap: 10px;
+        margin-top: auto; /* Memastikan tombol selalu di bawah card */
+    }
+    
+    .btn-cart-rk {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        border: 2px solid #e1e9f1;
+        background: white;
+        color: var(--rk-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        transition: all 0.3s;
+    }
+    
+    .btn-cart-rk:hover {
+        background: var(--rk-primary);
+        color: white;
+        border-color: var(--rk-primary);
+        transform: translateY(-2px);
+    }
+    
+    .btn-buy-rk {
+        flex: 1;
+        background: linear-gradient(135deg, var(--rk-primary), #2b4c7e);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .btn-buy-rk:hover {
+        background: linear-gradient(135deg, var(--rk-accent), #f23d6a);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(225, 36, 84, 0.3);
+        color: white;
+    }
+
+    /* --- Others --- */
+    .floating-cart-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 100;
+        background: white;
+        padding: 12px 25px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(34,58,102,0.2);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--rk-primary);
+        font-weight: 700;
+        border: 2px solid var(--rk-primary);
+        transition: all 0.3s ease;
+    }
+
+    .empty-state-prod {
+        text-align: center;
+        padding: 60px 20px;
+    }
+</style>
+@endpush
+
+<!-- ===== HERO ===== -->
+<section class="rk-hero">
+    <div class="rk-hero-dots">
+        <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="container">
+        <div class="rk-hero-inner">
+            <div class="rk-hero-badge" style="margin-bottom:12px;">
+                <i class="icofont-medical-sign"></i> Kategori Produk
+            </div>
+            
+            <h1 class="mb-3">{{ $kategori->kategoriName }}</h1>
+            
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center breadcrumb-rk mb-0" style="background:transparent;padding:0;">
+                    <li class="breadcrumb-item-rk"><a href="{{ route('home') }}">Beranda</a></li>
+                    <li class="breadcrumb-item-rk mx-2">/</li>
+                    <li class="breadcrumb-item-rk"><a href="{{ route('landing.dokter.kategori') }}">Produk Kesehatan</a></li>
+                    <li class="breadcrumb-item-rk mx-2">/</li>
+                    <li class="breadcrumb-item-rk active" style="color:#e12454;">{{ $kategori->kategoriName }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<div class="rk-wave">
+    <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 80L48 74.7C96 69.3 192 58.7 288 53.3C384 48 480 48 576 53.3C672 58.7 768 69.3 864 69.3C960 69.3 1056 58.7 1152 48C1248 37.3 1344 26.7 1392 21.3L1440 16V80H1392C1344 80 1248 80 1152 80C1056 80 960 80 864 80C768 80 672 80 576 80C480 80 384 80 288 80C192 80 96 80 48 80H0Z" fill="#f8f9fa"/>
+    </svg>
+</div>
+
+<section class="section py-5 bg-light rk-product-section">
+    <div class="container">
+
+        @if($produks->count() > 0)
+            <div class="row g-4">
+                @foreach($produks as $produk)
+                <div class="col-lg-4 col-md-6 mb-4 rk-reveal rk-up rk-stagger" style="--s:{{ $loop->index % 6 }};">
+                    <div class="card product-card-premium h-100">
+                        <!-- Image Container -->
+                        <div class="product-image-container">
+                            @php
+                                $prodImg = $produk->gambar ?? '';
+                                $finalImg = file_exists(public_path($prodImg)) ? asset($prodImg) : asset('storage/' . $prodImg);
+                                if(empty($prodImg)) $finalImg = asset('images/no-image.png');
+                            @endphp
+                            <img src="{{ $finalImg }}" alt="{{ $produk->produkName }}">
+                            
+                            <!-- Stock Badge -->
+                            @if($produk->qty == 0)
+                                <span class="badge-stock-rk badge-out-of-stock">Stok Habis</span>
+                            @elseif($produk->qty < 10)
+                                <span class="badge-stock-rk badge-low-stock">Stok Terbatas</span>
+                            @else
+                                <span class="badge-stock-rk badge-in-stock">Tersedia</span>
+                            @endif
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="product-body-premium">
+                            <span class="product-category-label">{{ $kategori->kategoriName }}</span>
+                            <h4 class="product-name-rk text-dark">{{ $produk->produkName }}</h4>
+                            
+                            <div class="product-price-rk">
+                                Rp {{ number_format($produk->price ?? 0, 0, ',', '.') }}
+                            </div>
+                            <div class="product-stock-text">
+                                <i class="icofont-box me-1"></i> Sisa Stok: <strong>{{ $produk->qty }} unit</strong>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="product-actions-rk">
+                                @if($produk->qty > 0)
+                                    <button type="button" 
+                                            class="btn-cart-rk add-to-cart-btn" 
+                                            data-id="{{ $produk->produkId }}"
+                                            title="Tambah ke Keranjang">
+                                        <i class="icofont-shopping-cart"></i>
+                                    </button>
+                                    <button type="button" 
+                                            class="btn-buy-rk buy-now-btn" 
+                                            data-id="{{ $produk->produkId }}" 
+                                            data-name="{{ $produk->produkName }}">
+                                        Beli Sekarang
+                                    </button>
+                                @else
+                                    <button class="btn btn-secondary w-100 rounded-4" disabled style="height: 50px; font-weight: 700;">
+                                        Habis
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        @else
+            <div class="empty-state-prod">
+                <div class="empty-icon-prod"><i class="icofont-search-folder"></i></div>
+                <h4 class="fw-bold text-dark">Maaf, Produk Belum Tersedia</h4>
+                <p class="text-muted">Kategori ini sedang kosong, silakan cek kategori lainnya.</p>
+                <a href="{{ route('landing.dokter.kategori') }}" class="btn btn-outline-primary mt-3 px-4 py-2 rounded-pill font-weight-bold">
+                    Eksplor Kategori Lain
+                </a>
+            </div>
+        @endif
+
+    </div>
 </section>
 
 
-<section class="py-5">
-<div class="container">
-
-@if($produks->count() > 0)
-<div class="row">
-
-@foreach($produks as $produk)
-<div class="col-lg-4 col-md-6 mb-4">
-
-<div class="detail-product-card">
-
-<div class="detail-product-image">
-
-  {{-- ✅ FIX: Gambar sekarang dibaca dari storage (Filament FileUpload) --}}
-  @if($produk->gambar)
-    <img src="{{ asset('storage/' . $produk->gambar) }}"
-         alt="{{ $produk->produkName }}"
-         style="width:100%; height:220px; object-fit:cover;">
-  @else
-    <img src="{{ asset('images/no-image.png') }}"
-         alt="No Image"
-         style="width:100%; height:220px; object-fit:cover; background:#f0f0f0;">
-  @endif
-
-  @if($produk->qty == 0)
-    <span class="detail-badge-stock detail-out-of-stock">Stok Habis</span>
-  @elseif($produk->qty < 10)
-    <span class="detail-badge-stock detail-low-stock">Stok Terbatas</span>
-  @else
-    <span class="detail-badge-stock detail-in-stock">Tersedia</span>
-  @endif
-
-</div>
-
-<div class="detail-product-body">
-
-  <h4 class="detail-product-name">{{ $produk->produkName }}</h4>
-
-  <div class="detail-price-section">
-    <div class="detail-price-value">
-      Rp {{ number_format($produk->price ?? 0, 0, ',', '.') }}
-    </div>
-    <div class="detail-stock-info">
-      📦 Stok Tersedia: <strong>{{ $produk->qty }} unit</strong>
-    </div>
-  </div>
-
-  @if($produk->qty > 0)
-    <div class="detail-product-buttons">
-      <button type="button"
-              class="detail-btn-cart-outline add-to-cart-btn"
-              data-id="{{ $produk->produkId }}">
-          <i class="icofont-cart-alt"></i> Add To Cart
-      </button>
-
-      <button type="button"
-              class="detail-btn-buy-now buy-now-btn"
-              data-id="{{ $produk->produkId }}"
-              data-name="{{ $produk->produkName }}">
-          <i class="icofont-check"></i> Buy Now
-      </button>
-    </div>
-  @else
-    <button class="btn btn-secondary w-100" disabled>Stok Habis</button>
-  @endif
-
-</div>
-</div>
-
-</div>
-@endforeach
-
-</div>
-@else
-<p>Tidak ada produk.</p>
-@endif
-
-<!-- Quick link to cart page -->
-<div class="container mt-5">
-  <a href="{{ route('cart.index') }}" class="btn btn-outline-primary" style="border-radius: 10px; padding: 12px 32px; font-weight: 700; border: 2px solid #223a66; color: #223a66;">
-    <i class="icofont-cart-alt"></i> Lihat Keranjang Belanja
-  </a>
-</div>
-
-</div>
-</section>
 
 <!-- Modal untuk pilih quantity saat Buy Now -->
 <div class="modal fade" id="buyNowModal" tabindex="-1" aria-labelledby="buyNowModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="border: none; border-radius: 16px; box-shadow: 0 15px 50px rgba(34, 58, 102, 0.25);">
-      <div class="modal-header" style="background: linear-gradient(135deg, #223a66 0%, #1565c0 100%); border: none;">
-        <h5 class="modal-title" id="buyNowModalLabel" style="color: white; font-weight: 700;">🛒 Pembelian Cepat</h5>
-        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" style="padding: 30px;">
-        <div class="mb-4">
-          <label for="productNameDisplay" class="form-label" style="font-weight: 600; color: #223a66;">Nama Produk:</label>
-          <input type="text" class="form-control" id="productNameDisplay" readonly style="background: #f5f7fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; color: #6F8BA4;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content overflow-hidden border-0" style="border-radius: 24px; box-shadow: 0 20px 60px rgba(34, 58, 102, 0.25);">
+            <div class="modal-header px-4 py-4" style="background: linear-gradient(135deg, var(--rk-primary), #2b4c7e); border: none;">
+                <h5 class="modal-title text-white fw-bold d-flex align-items-center gap-2" id="buyNowModalLabel">
+                    <i class="icofont-cart-alt fs-4"></i> Konfirmasi Pembelian
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 0.8; font-size: 24px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-4 p-md-5">
+                <div class="mb-4">
+                    <label class="form-label small text-muted text-uppercase fw-bold ls-1 d-block mb-2">Item Terpilih</label>
+                    <input type="text" class="form-control border-0 bg-light fw-bold py-3 px-3 text-dark fs-15 rounded-4" id="productNameDisplay" readonly>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label small text-muted text-uppercase fw-bold ls-1 d-block mb-3">Tentukan Jumlah</label>
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <button type="button" id="decreaseQty" class="btn btn-light shadow-sm d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 12px; font-size: 20px;">-</button>
+                        <input type="number" class="form-control text-center border-0 bg-light fw-bold fs-4" id="quantityInput" min="1" value="1" readonly style="width: 100px; height: 50px; border-radius: 12px;">
+                        <button type="button" id="increaseQty" class="btn btn-light shadow-sm d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 12px; font-size: 20px;">+</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <div class="row w-100 g-3">
+                    <div class="col-sm-6 text-center text-sm-left">
+                        <button type="button" class="btn btn-light w-100 py-3 rounded-pill fw-bold text-muted border" data-dismiss="modal">Batal</button>
+                    </div>
+                    <div class="col-sm-6 text-center text-sm-right">
+                        <button type="button" class="btn w-100 py-3 rounded-pill fw-bold text-white" id="confirmBuyNowBtn" style="background: var(--rk-accent); box-shadow: 0 8px 20px rgba(225, 36, 84, 0.25);">Lanjut Checkout</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="mb-4">
-          <label for="quantityInput" class="form-label" style="font-weight: 600; color: #223a66;">Jumlah Pembelian:</label>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <button type="button" id="decreaseQty" style="width: 40px; height: 40px; border: 1px solid #e5e7eb; background: white; border-radius: 8px; cursor: pointer; font-weight: 700; color: #223a66;">−</button>
-            <input type="number" class="form-control" id="quantityInput" min="1" value="1" required style="text-align: center; border-radius: 8px; font-weight: 700; font-size: 16px;">
-            <button type="button" id="increaseQty" style="width: 40px; height: 40px; border: 1px solid #e5e7eb; background: white; border-radius: 8px; cursor: pointer; font-weight: 700; color: #223a66;">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer" style="border-top: 1px solid #e5e7eb; padding: 20px;">
-        <button type="button" class="btn" data-dismiss="modal" style="background: #e5e7eb; color: #6F8BA4; font-weight: 600; border-radius: 8px; padding: 10px 24px;">Batal</button>
-        <button type="button" class="btn" id="confirmBuyNowBtn" style="background: linear-gradient(135deg, #e12454 0%, #c01e47 100%); color: white; font-weight: 700; border-radius: 8px; padding: 10px 32px;">Lanjut Checkout</button>
-      </div>
     </div>
-  </div>
 </div>
 
 @push('scripts')
@@ -142,6 +386,9 @@ document.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const produkId = this.dataset.id;
+            const originalIcon = this.innerHTML;
+            this.innerHTML = '<i class="icofont-spinner-alt-3 icofont-spin"></i>';
+            this.disabled = true;
 
             fetch('{{ route("cart.add") }}', {
                 method: 'POST',
@@ -156,13 +403,18 @@ document.addEventListener('DOMContentLoaded', function(){
             })
             .then(r => r.json())
             .then(js => {
+                this.innerHTML = originalIcon;
+                this.disabled = false;
                 if(js.success) {
+                    // Update header cart count if possible or just show toast
                     alert('Produk berhasil ditambahkan ke keranjang!');
                 } else {
-                    alert('Error: ' + (js.error || 'Gagal menambahkan ke keranjang'));
+                    alert('Gagal: ' + (js.error || 'Terjadi kesalahan'));
                 }
             })
             .catch(err => {
+                this.innerHTML = originalIcon;
+                this.disabled = false;
                 console.error('Error:', err);
                 alert('Gagal menambahkan ke keranjang');
             });
@@ -186,25 +438,25 @@ document.addEventListener('DOMContentLoaded', function(){
     // Quantity increase/decrease
     const quantityInput = document.getElementById('quantityInput');
 
-    document.getElementById('increaseQty').addEventListener('click', function(e) {
-        e.preventDefault();
+    document.getElementById('increaseQty').addEventListener('click', function() {
         quantityInput.value = parseInt(quantityInput.value) + 1;
     });
 
-    document.getElementById('decreaseQty').addEventListener('click', function(e) {
-        e.preventDefault();
+    document.getElementById('decreaseQty').addEventListener('click', function() {
         const currentVal = parseInt(quantityInput.value);
         if(currentVal > 1) quantityInput.value = currentVal - 1;
     });
 
     // Confirm Buy Now
     document.getElementById('confirmBuyNowBtn').addEventListener('click', function() {
-        const qty = parseInt(quantityInput.value);
-
-        if(qty < 1) {
-            alert('Jumlah harus minimal 1');
+        @guest
+            window.location.href = '{{ route("login") }}';
             return;
-        }
+        @endguest
+
+        const qty = parseInt(quantityInput.value);
+        this.innerHTML = '<i class="icofont-spinner-alt-3 icofont-spin"></i> Memproses...';
+        this.disabled = true;
 
         fetch('{{ route("cart.add") }}', {
             method: 'POST',
@@ -220,15 +472,18 @@ document.addEventListener('DOMContentLoaded', function(){
         .then(r => r.json())
         .then(js => {
             if(js.success) {
-                $('#buyNowModal').modal('hide');
                 window.location.href = '{{ route("checkout") }}';
             } else {
-                alert('Error: ' + (js.error || 'Gagal menambahkan ke keranjang'));
+                this.innerHTML = 'Lanjut Checkout';
+                this.disabled = false;
+                alert('Gagal: ' + (js.error || 'Terjadi kesalahan'));
             }
         })
         .catch(err => {
+            this.innerHTML = 'Lanjut Checkout';
+            this.disabled = false;
             console.error('Error:', err);
-            alert('Gagal menambahkan ke keranjang');
+            alert('Gagal memproses pesanan');
         });
     });
 

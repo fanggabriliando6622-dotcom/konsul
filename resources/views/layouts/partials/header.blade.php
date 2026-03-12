@@ -180,27 +180,46 @@
 
                     <!-- ===== LOGIN / PROFILE ===== -->
                     @auth('customer')
+                        @php $authCustomer = Auth::guard('customer')->user(); @endphp
                         <div class="dropdown">
-                            <a href="#"
-                               class="btn btn-login-sm dropdown-toggle"
-                               data-toggle="dropdown">
-                                <i class="icofont-user mr-1"></i>
-                                {{ Auth::guard('customer')->user()->customerName }}
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle rounded-pill"
+                               data-toggle="dropdown"
+                               style="gap: 8px; border: 2px solid #223a66; padding: 4px 16px 4px 4px; background: rgba(34, 58, 102, 0.05); transition: all 0.3s ease;">
+                                
+                                @if($authCustomer->avatar)
+                                    <img src="{{ asset($authCustomer->avatar) }}"
+                                         alt="{{ $authCustomer->customerName }}"
+                                         style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; ">
+                                @else
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #223a66, #e12454); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">
+                                        {{ strtoupper(substr($authCustomer->customerName, 0, 1)) }}
+                                    </div>
+                                @endif
+                                
+                                <span style="font-weight: 700; color: #223a66; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    {{ $authCustomer->customerName }}
+                                </span>
                             </a>
 
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a href="{{ route('landing.customer.profile') }}"
-                                   class="dropdown-item">
-                                    Profile
+                            <div class="dropdown-menu dropdown-menu-right" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: none; min-width: 240px; padding: 12px 0; margin-top: 10px;">
+                                <div style="padding: 12px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 8px;">
+                                    <div style="font-weight:700; color:#223a66; font-size:15px;">{{ $authCustomer->customerName }}</div>
+                                    <div style="font-size:13px; color:#6F8BA4;">{{ $authCustomer->customerEmail }}</div>
+                                </div>
+                                <a href="{{ route('landing.customer.profile') }}" class="dropdown-item" style="padding: 10px 20px; font-size: 14px; font-weight: 500;">
+                                    <i class="icofont-ui-user mr-3" style="color:#223a66; font-size: 18px;"></i> Profil Saya
                                 </a>
-
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit"
-                                            class="dropdown-item text-danger">
-                                        Logout
-                                    </button>
-                                </form>
+                                <a href="{{ route('order.history') }}" class="dropdown-item" style="padding: 10px 20px; font-size: 14px; font-weight: 500;">
+                                    <i class="icofont-listing-box mr-3" style="color:#223a66; font-size: 18px;"></i> Riwayat Pesanan
+                                </a>
+                                <div style="border-top: 1px solid #f0f0f0; margin-top: 8px; padding-top: 8px;">
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item" style="padding: 10px 20px; font-size: 14px; font-weight: 500; color: #e12454;">
+                                            <i class="icofont-logout mr-3" style="font-size: 18px;"></i> Keluar
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     @else

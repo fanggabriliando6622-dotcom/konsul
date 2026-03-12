@@ -8,52 +8,7 @@
 @push('styles')
 <style>
 
-.page-hero-terms{
-    background: linear-gradient(135deg,#1e88e5,#1565c0);
-    padding:80px 20px;
-    border-radius:25px;
-    position:relative;
-    overflow:hidden;
-    text-align:center;
-    margin-bottom:0;
-}
-
-.page-hero-terms::before{
-    content:'';
-    position:absolute;
-    width:350px;
-    height:350px;
-    background:rgba(255,255,255,0.07);
-    border-radius:50%;
-    top:-100px;
-    right:-100px;
-}
-
-.page-hero-terms::after{
-    content:'';
-    position:absolute;
-    width:250px;
-    height:250px;
-    background:rgba(255,255,255,0.05);
-    border-radius:50%;
-    bottom:-80px;
-    left:-80px;
-}
-
-.page-hero-terms h1{
-    color:#fff;
-    font-weight:800;
-    font-size:42px;
-}
-
-.page-hero-terms p{
-    color:#e3f2fd;
-    font-size:17px;
-    margin-top:10px;
-}
-
 .terms-wrapper{
-    margin-top:-60px;
     position:relative;
     z-index:10;
 }
@@ -62,12 +17,13 @@
     background:#ffffff;
     border-radius:20px;
     padding:40px;
-    box-shadow:0 10px 50px rgba(21,101,192,0.08);
+    box-shadow:0 10px 50px rgba(0,42,106,0.05);
+    border: 1px solid rgba(0,0,0,0.04);
 }
 
 .terms-card h4{
     font-weight:700;
-    color:#1565c0;
+    color:#223a66;
     margin-bottom:25px;
 }
 
@@ -82,11 +38,12 @@
     padding-left:60px;
     position:relative;
     font-size:15px;
-    color:#455a64;
+    color:#6b7c93;
+    line-height: 1.6;
 }
 
 .terms-ol li strong{
-    color:#0d47a1;
+    color:#223a66;
 }
 
 .terms-ol li::before{
@@ -97,17 +54,17 @@
     top:0;
     width:40px;
     height:40px;
-    background:#1565c0;
+    background:#e12454;
     color:#fff;
     border-radius:50%;
     text-align:center;
     line-height:40px;
     font-weight:700;
-    box-shadow:0 4px 15px rgba(21,101,192,0.3);
+    box-shadow:0 4px 15px rgba(225,36,84,0.25);
 }
 
 .terms-footer{
-    background:#e3f2fd;
+    background:rgba(225,36,84,0.05);
     padding:18px;
     border-radius:10px;
     margin-top:25px;
@@ -132,16 +89,33 @@
 @endpush
 
 
-<section class="py-5">
+<!-- ===== HERO ===== -->
+<section class="rk-hero">
+    <div class="rk-hero-dots">
+        <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="container">
+        <div class="rk-hero-inner">
+            <div class="rk-hero-badge">
+                <i class="icofont-law-document"></i> Dokumen
+            </div>
+            <h1>Syarat & <span>Ketentuan</span></h1>
+            <p class="rk-hero-desc">Harap membaca syarat penggunaan sebelum menggunakan layanan RuangKonsul</p>
+        </div>
+    </div>
+</section>
+
+<div class="rk-wave">
+    <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 80L48 74.7C96 69.3 192 58.7 288 53.3C384 48 480 48 576 53.3C672 58.7 768 69.3 864 69.3C960 69.3 1056 58.7 1152 48C1248 37.3 1344 26.7 1392 21.3L1440 16V80H1392C1344 80 1248 80 1152 80C1056 80 960 80 864 80C768 80 672 80 576 80C480 80 384 80 288 80C192 80 96 80 48 80H0Z" fill="white"/>
+    </svg>
+</div>
+
+<section class="py-5" style="margin-top:-60px;">
   <div class="container">
 
-    <div class="page-hero-terms">
-        <h1>Syarat & Ketentuan</h1>
-        <p>Harap membaca syarat penggunaan sebelum menggunakan layanan RuangKonsul</p>
-    </div>
-
     <div class="terms-wrapper">
-        <div class="terms-card">
+        <div class="terms-card rk-reveal rk-up">
 
             <h4>Ringkasan Ketentuan Penggunaan</h4>
 

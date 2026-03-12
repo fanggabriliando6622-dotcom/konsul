@@ -35,12 +35,17 @@ class Produk extends Model
     
     protected $fillable = [
         'produkId',
+        'kategoriId',
+        'adminId',
         'produkName',
         'price',
         'qty',
         'gambar',
-        'kategoriId',
-        'adminId'
+        'Tanggal_Kadaluwarsa'
+    ];
+
+    protected $casts = [
+        'Tanggal_Kadaluwarsa' => 'date',
     ];
 
     /**

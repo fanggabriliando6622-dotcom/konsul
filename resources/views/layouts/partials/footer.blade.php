@@ -21,7 +21,7 @@
 						 </a>
 						</li>
 						<li class="list-inline-item">
-							<a href="https://www.tiktok.com/@ruangkonsul0220/" target="_blank">
+							<a href="https://www.instagram.com/ruangkonsul0220/" target="_blank">
 								<i class="icofont-instagram"></i>
 							</a>
 						</li>

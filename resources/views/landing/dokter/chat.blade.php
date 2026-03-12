@@ -1,710 +1,437 @@
 @extends('layouts.app')
 
-@section('title', 'Chat Dokter | RuangKonsul')
-
-@section('meta_description', 'RuangKonsul - Konsultasi kesehatan online profesional')
+@section('title', 'Konsultasi Medis | RuangKonsul')
 
 @section('content')
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/dokter.css') }}">
 <style>
     :root {
-        --primary-color: #1f3a70;
-        --secondary-color: #E91E5F;
-        --light-bg: #f8f9fa;
-        --border-color: #e0e6f2;
-        --text-muted: #6c757d;
-        --success-color: #28a745;
+        --rk-primary: #223a66;
+        --rk-accent: #e12454;
+        --rk-success: #28a745;
+        --rk-bg-light: #f4f7fb;
     }
 
     body {
-        background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fa 100%);
+        background-color: var(--rk-bg-light);
     }
 
-    /* HEADER */
-    .doctor-header {
+    /* Main Chat Layout */
+    .chat-container-modern {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 160px);
+        min-height: 500px;
         background: white;
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 8px rgba(31, 58, 112, 0.08);
-        border-left: 4px solid var(--secondary-color);
+        border-radius: 24px;
+        box-shadow: 0 15px 45px rgba(34, 58, 102, 0.08);
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
     }
 
-    .doctor-card-header {
+    /* Top Navigation / Header */
+    .chat-header-modern {
+        padding: 15px 25px;
+        background: white;
+        border-bottom: 1px solid #f0f3f7;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 20px;
+        z-index: 10;
     }
 
-    .doctor-avatar-container {
+    .doctor-profile-sm {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .doc-avatar-wrapper {
         position: relative;
-        margin-right: 25px;
+        width: 50px;
+        height: 50px;
     }
 
-    .doctor-avatar {
-        width: 90px;
-        height: 90px;
-        border-radius: 12px;
+    .doc-avatar-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
         object-fit: cover;
-        border: 3px solid var(--secondary-color);
-        box-shadow: 0 4px 12px rgba(233, 30, 95, 0.15);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
-    .doctor-status-badge {
+    .online-indicator {
         position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 28px;
-        height: 28px;
-        border-radius: 50%;
-        background: var(--success-color);
+        bottom: -2px;
+        right: -2px;
+        width: 14px;
+        height: 14px;
+        background: var(--rk-success);
         border: 3px solid white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        color: white;
-        box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);
+        border-radius: 50%;
     }
 
-    .doctor-info h4 {
-        color: var(--primary-color);
+    .doc-meta h6 {
+        margin: 0;
         font-weight: 700;
-        margin-bottom: 8px;
-        font-size: 22px;
+        color: var(--rk-primary);
+        font-size: 15px;
     }
 
-    .doctor-specialty {
-        color: var(--secondary-color);
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 8px;
-        text-transform: capitalize;
-    }
-
-    .doctor-status-text {
-        font-size: 13px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .doctor-price-card {
-        background: linear-gradient(135deg, var(--primary-color), #2d4a8c);
-        color: white;
-        padding: 20px 25px;
-        border-radius: 10px;
-        text-align: center;
-        min-width: 180px;
-    }
-
-    .doctor-price-label {
-        font-size: 12px;
-        opacity: 0.9;
-        margin-bottom: 8px;
+    .doc-meta span {
+        font-size: 11px;
+        color: var(--rk-accent);
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
-    .doctor-price-value {
-        font-size: 24px;
-        font-weight: 700;
-        color: #fff;
+    .session-info {
+        text-align: right;
     }
 
-    /* CHAT STATUS BADGE */
-    .chat-status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-top: 6px;
+    .session-id {
+        font-size: 11px;
+        color: #adb5bd;
+        font-family: monospace;
+        display: block;
     }
 
-    /* CHAT CONTAINER */
-    .chat-wrapper {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 16px rgba(31, 58, 112, 0.1);
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        height: 650px;
-        border: 1px solid var(--border-color);
-    }
-
-    .chat-header-top {
-        background: linear-gradient(135deg, var(--primary-color), #2d4a8c);
-        padding: 20px 25px;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .chat-header-title {
-        font-size: 16px;
-        font-weight: 600;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: white;
-    }
-
-    .chat-header-status {
-        font-size: 12px;
-        opacity: 0.85;
-        margin-top: 4px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .chat-status-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-
-    .chat-status-indicator {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: #28d234;
-        box-shadow: 0 0 8px rgba(40, 210, 52, 0.6);
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.6; }
-    }
-
-    /* MESSAGES AREA */
-    .chat-messages {
+    /* Messages Display Area */
+    .messages-viewport {
         flex: 1;
         overflow-y: auto;
-        padding: 30px 25px;
-        background: #fff;
+        padding: 30px;
+        background: #fdfdfe;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 20px;
+        scroll-behavior: smooth;
     }
 
-    .chat-messages::-webkit-scrollbar { width: 6px; }
-    .chat-messages::-webkit-scrollbar-track { background: transparent; }
-    .chat-messages::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-    .chat-messages::-webkit-scrollbar-thumb:hover { background: #999; }
+    .messages-viewport::-webkit-scrollbar { width: 5px; }
+    .messages-viewport::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
 
-    .message-welcome {
-        text-align: center;
-        color: var(--text-muted);
-        padding: 40px 20px;
-        margin: auto;
-    }
-
-    .message-welcome-icon {
-        font-size: 48px;
-        margin-bottom: 15px;
-        display: block;
-    }
-
-    .message-welcome p {
-        font-size: 15px;
-        margin: 10px 0;
-        font-weight: 500;
-    }
-
-    .message-welcome small {
-        display: block;
-        font-size: 13px;
-        color: #999;
-        margin-top: 15px;
-    }
-
-    /* CHAT LOCKED */
-    .chat-locked {
-        text-align: center;
-        color: var(--text-muted);
-        padding: 40px 20px;
-        margin: auto;
-    }
-
-    .chat-locked-icon {
-        font-size: 48px;
-        margin-bottom: 15px;
-        display: block;
-    }
-
-    /* MESSAGE ROW */
-    .message-row {
+    /* Message Bubbles */
+    .msg-row {
         display: flex;
-        gap: 12px;
-        animation: slideIn 0.3s ease;
+        width: 100%;
     }
 
-    .message-row.sent { justify-content: flex-end; }
-
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .message-content {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        max-width: 65%;
-    }
-
-    .message-bubble {
+    .msg-bubble {
+        max-width: 75%;
         padding: 12px 18px;
-        border-radius: 18px;
-        word-wrap: break-word;
-        line-height: 1.5;
         font-size: 14px;
+        line-height: 1.6;
+        position: relative;
     }
 
-    .message-row.received .message-bubble {
-        background: var(--light-bg);
-        color: var(--primary-color);
-        border: 1px solid var(--border-color);
-        box-shadow: 0 1px 3px rgba(31, 58, 112, 0.08);
-        border-radius: 4px 18px 18px 18px;
+    /* Received (Doctor) */
+    .msg-row.received {
+        justify-content: flex-start;
     }
-
-    .message-row.sent .message-bubble {
-        background: linear-gradient(135deg, var(--secondary-color), #d41a4f);
-        color: white;
-        box-shadow: 0 3px 10px rgba(233, 30, 95, 0.2);
-        border-radius: 18px 4px 18px 18px;
-    }
-
-    .message-time {
-        font-size: 11px;
-        color: var(--text-muted);
-    }
-
-    .message-row.sent .message-time { text-align: right; }
-
-    .message-sender {
-        font-size: 11px;
-        font-weight: 600;
-        color: var(--primary-color);
-        margin-bottom: 2px;
-    }
-
-    /* INPUT FOOTER */
-    .chat-footer {
-        padding: 18px 25px;
-        border-top: 1px solid var(--border-color);
-        background: #fff;
-        flex-shrink: 0;
-    }
-
-    .chat-input-group {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-    }
-
-    .chat-input-group input {
-        flex: 1;
-        border: 1.5px solid var(--border-color);
-        border-radius: 24px;
-        padding: 12px 20px;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        background: #f8f9fa;
-        color: var(--primary-color);
-        outline: none;
-    }
-
-    .chat-input-group input:focus {
-        border-color: var(--secondary-color);
+    .msg-row.received .msg-bubble {
         background: white;
-        box-shadow: 0 0 0 3px rgba(233, 30, 95, 0.1);
+        color: #444;
+        border-radius: 4px 20px 20px 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        border: 1px solid #f0f3f7;
     }
 
-    .chat-input-group input::placeholder { color: #aaa; }
-
-    .chat-input-group input:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
+    /* Sent (Customer) */
+    .msg-row.sent {
+        justify-content: flex-end;
     }
-
-    .chat-input-group button {
-        padding: 12px 24px;
-        border-radius: 24px;
-        border: none;
-        background: linear-gradient(135deg, var(--secondary-color), #d41a4f);
+    .msg-row.sent .msg-bubble {
+        background: linear-gradient(135deg, var(--rk-primary), #2b4c7e);
         color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
+        border-radius: 20px 4px 20px 20px;
+        box-shadow: 0 8px 20px rgba(34, 58, 102, 0.15);
+    }
+
+    .msg-time {
+        display: block;
+        font-size: 10px;
+        margin-top: 5px;
+        opacity: 0.7;
+    }
+    .msg-row.sent .msg-time { text-align: right; }
+
+    /* Input Footer */
+    .chat-input-modern {
+        padding: 20px 25px;
+        background: white;
+        border-top: 1px solid #f0f3f7;
+    }
+
+    .input-box-wrapper {
         display: flex;
         align-items: center;
-        gap: 8px;
-        box-shadow: 0 2px 8px rgba(233, 30, 95, 0.2);
-        white-space: nowrap;
+        background: #f8fafd;
+        border: 1px solid #e1e9f1;
+        border-radius: 50px;
+        padding: 5px 5px 5px 20px;
+        transition: all 0.3s;
+    }
+    .input-box-wrapper:focus-within {
+        border-color: var(--rk-primary);
+        box-shadow: 0 0 0 4px rgba(34, 58, 102, 0.05);
+        background: white;
     }
 
-    .chat-input-group button:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(233, 30, 95, 0.3);
-    }
-
-    .chat-input-group button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    /* LOADING */
-    .loading-spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        border-top-color: white;
-        animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .error-message {
-        background: #fee;
-        color: #c33;
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 13px;
-        margin-top: 10px;
-        border-left: 3px solid #c33;
-    }
-
-    /* BACK LINK */
-    .back-link-container {
-        margin-top: 30px;
-        padding-bottom: 20px;
-    }
-
-    .back-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--secondary-color);
-        text-decoration: none;
-        font-weight: 600;
+    .main-input {
+        border: none;
+        background: transparent;
+        flex: 1;
+        padding: 10px 0;
+        outline: none;
         font-size: 14px;
-        transition: all 0.3s ease;
-        padding: 8px 12px;
-        border-radius: 6px;
+        color: var(--rk-primary);
     }
 
-    .back-link:hover {
-        background: rgba(233, 30, 95, 0.08);
-        transform: translateX(-4px);
-        color: var(--secondary-color);
+    .btn-send-modern {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: var(--rk-accent);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(225, 36, 84, 0.3);
+    }
+    .btn-send-modern:hover {
+        transform: scale(1.05) rotate(-10deg);
+        background: #f23d6a;
+    }
+    .btn-send-modern:disabled {
+        background: #ccc;
+        box-shadow: none;
     }
 
-    /* RESPONSIVE */
+    /* Welcome State */
+    .chat-empty-state {
+        margin: auto;
+        text-align: center;
+        max-width: 300px;
+    }
+    .empty-icon {
+        font-size: 50px;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    /* Loading Spinner */
+    .dot-loader {
+        display: flex;
+        gap: 4px;
+    }
+    .dot {
+        width: 6px;
+        height: 6px;
+        background: white;
+        border-radius: 50%;
+        animation: dotPulse 1.4s infinite ease-in-out both;
+    }
+    .dot:nth-child(1) { animation-delay: -0.32s; }
+    .dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes dotPulse {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1.0); }
+    }
+
+    /* Back Button */
+    .btn-back-header {
+        border: none;
+        background: #f1f4f9;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--rk-primary);
+        transition: all 0.2s;
+        margin-right: 15px;
+    }
+    .btn-back-header:hover {
+        background: var(--rk-primary);
+        color: white;
+    }
+
     @media (max-width: 768px) {
-        .doctor-card-header { flex-direction: column; text-align: center; }
-        .doctor-price-card { min-width: auto; width: 100%; }
-        .chat-wrapper { height: 500px; }
-        .message-content { max-width: 85%; }
-        .doctor-avatar { width: 80px; height: 80px; }
-        .doctor-info h4 { font-size: 18px; }
+        .chat-container-modern {
+            height: calc(100vh - 100px);
+            border-radius: 0;
+        }
+        .msg-bubble { max-width: 85%; }
     }
 </style>
 @endpush
 
-<section class="section py-5">
-    <div class="container">
-
-        <!-- HEADER DOKTER -->
-        <div class="doctor-header">
-            <div class="doctor-card-header">
-                <div class="d-flex align-items-start" style="flex: 1;">
-
-                    <div class="doctor-avatar-container">
-                    @php
-                      $imagePath = file_exists(public_path($dokter->gambar)) ? asset($dokter->gambar) : asset('storage/' . $dokter->gambar);
-                    @endphp
-                        <img src="{{ $imagePath }}"
-                             class="doctor-avatar"
-                             alt="{{ $dokter->dokterName }}">
-                        <div class="doctor-status-badge">✓</div>
-                    </div>
-
-                    <div class="doctor-info">
-                        <h4>Dr. {{ $dokter->dokterName }}</h4>
-                        <div class="doctor-specialty">{{ ucwords($dokter->namaBidang) }}</div>
-
+<div class="container py-4 px-md-0">
+    <div class="chat-container-modern">
+        
+        <!-- Header -->
+        <header class="chat-header-modern">
+            <div class="d-flex align-items-center">
+                <a href="{{ url()->previous() }}" class="btn-back-header">
+                    <i class="icofont-arrow-left"></i>
+                </a>
+                <div class="doctor-profile-sm">
+                    <div class="doc-avatar-wrapper">
                         @php
-                            $statusDokter = strtolower($dokter->statusDokter ?? 'offline');
-                            $statusDokterConfig = [
-                                'online'   => ['color' => '#28a745', 'label' => 'Online'],
-                                'offline'  => ['color' => '#6c757d', 'label' => 'Offline'],
-                                'sibuk'    => ['color' => '#dc3545', 'label' => 'Sibuk'],
-                                'tersedia' => ['color' => '#007bff', 'label' => 'Tersedia'],
-                            ];
-                            $dokterStatus = $statusDokterConfig[$statusDokter] ?? $statusDokterConfig['offline'];
+                            $imagePath = file_exists(public_path($dokter->gambar)) ? asset($dokter->gambar) : asset('storage/' . $dokter->gambar);
                         @endphp
-
-                        <div class="doctor-status-text" style="color: {{ $dokterStatus['color'] }};">
-                            <span style="width: 8px; height: 8px; background: {{ $dokterStatus['color'] }}; border-radius: 50%; display: inline-block;"></span>
-                            {{ $dokterStatus['label'] }}
-                        </div>
-
-                        @if($chat)
-                            @php
-                                $chatStatus = strtolower($chat->status);
-                                $chatStatusConfig = [
-                                    'online'   => ['bg' => '#d4edda', 'text' => '#155724', 'label' => 'Chat Aktif'],
-                                    'offline'  => ['bg' => '#e2e3e5', 'text' => '#383d41', 'label' => 'Chat Offline'],
-                                    'sibuk'    => ['bg' => '#f8d7da', 'text' => '#721c24', 'label' => 'Dokter Sibuk'],
-                                    'tersedia' => ['bg' => '#cce5ff', 'text' => '#004085', 'label' => 'Dokter Tersedia'],
-                                ];
-                                $chatBadge = $chatStatusConfig[$chatStatus] ?? ['bg' => '#e2e3e5', 'text' => '#383d41', 'label' => ucfirst($chat->status)];
-                            @endphp
-                            <span class="chat-status-badge"
-                                  style="background-color: {{ $chatBadge['bg'] }}; color: {{ $chatBadge['text'] }};">
-                                <span style="width: 6px; height: 6px; border-radius: 50%; background: {{ $chatBadge['text'] }}; display: inline-block;"></span>
-                                {{ $chatBadge['label'] }}
-                            </span>
-                        @endif
+                        <img src="{{ $imagePath }}" class="doc-avatar-img" alt="">
+                        <div class="online-indicator"></div>
                     </div>
-                </div>
-
-                <!-- BIAYA KONSULTASI -->
-                <div class="doctor-price-card">
-                    <div class="doctor-price-label">Biaya Konsultasi</div>
-                    <div class="doctor-price-value">
-                        Rp {{ number_format($dokter->hargaKonsultasi, 0, ',', '.') }}
+                    <div class="doc-meta">
+                        <h6>Dr. {{ $dokter->dokterName }}</h6>
+                        <span>{{ ucwords($dokter->namaBidang) }}</span>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="session-info d-none d-sm-block">
+                <span class="session-id">SID: {{ $chat->chatDokterId ?? 'N/A' }}</span>
+                <span class="badge badge-pill badge-light text-muted border px-3" style="font-size: 10px;">Enkripsi End-to-End</span>
+            </div>
+        </header>
 
-        <!-- CHAT CONTAINER -->
-        <div class="chat-wrapper">
-
-            <!-- Chat Header -->
-            <div class="chat-header-top">
-                <div>
-                    <h5 class="chat-header-title">
-                        <span class="chat-status-indicator"></span>
-                        Chat dengan Dr. {{ $dokter->dokterName }}
-                    </h5>
-                    @if($chat)
-                        <div class="chat-header-status">
-                            <span class="chat-status-dot" style="background: #28d234;"></span>
-                            ID Chat: {{ $chat->chatDokterId }}
-                        </div>
-                    @endif
+        <!-- Viewport -->
+        <main class="messages-viewport" id="chatViewport">
+            @if($chat)
+                <div class="chat-empty-state" id="welcomeMsg">
+                    <span class="empty-icon">🩺</span>
+                    <h6 class="fw-bold text-primary-rk">Konsultasi Dimulai</h6>
+                    <p class="text-muted small">Tuliskan gejala atau keluhan Anda untuk mulai berkonsultasi dengan dr. {{ $dokter->dokterName }}.</p>
                 </div>
-            </div>
-
-            <!-- MESSAGES -->
-            <div class="chat-messages" id="chatMessages">
-                @if($chat)
-                    <div class="message-welcome" id="welcomeMsg">
-                        <span class="message-welcome-icon">💬</span>
-                        <p><strong>Mulai percakapan dengan dokter</strong></p>
-                        <small>Kirim pesan pertama Anda untuk memulai konsultasi</small>
-                    </div>
-                @else
-                    <div class="chat-locked">
-                        <span class="chat-locked-icon">🔒</span>
-                        <p><strong>Sesi chat belum dibuat</strong></p>
-                        <small>Silakan kembali dan klik tombol "Chat Dokter" untuk memulai</small>
-                    </div>
-                @endif
-            </div>
-
-            <!-- INPUT -->
-            <div class="chat-footer">
-                <div class="chat-input-group">
-                    <input type="text"
-                           id="messageInput"
-                           placeholder="{{ $chat ? 'Ketik pesan Anda...' : 'Buat sesi chat terlebih dahulu' }}"
-                           autocomplete="off"
-                           {{ !$chat ? 'disabled' : '' }}>
-                    <button id="sendBtn" {{ !$chat ? 'disabled' : '' }}>
-                        <i class="icofont-send-mail"></i> Kirim
-                    </button>
+            @else
+                <div class="chat-empty-state">
+                    <span class="empty-icon">🔒</span>
+                    <h6 class="fw-bold">Sesi Terkunci</h6>
+                    <p class="text-muted small">Mohon selesaikan langkah sebelumnya untuk mulai chatting.</p>
                 </div>
-                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            @endif
+        </main>
+
+        <!-- Footer Input -->
+        <footer class="chat-input-modern">
+            <div class="input-box-wrapper">
+                <input type="text" 
+                       id="msgInputMain" 
+                       class="main-input" 
+                       placeholder="{{ $chat ? 'Ketik pesan konsultasi Anda...' : 'Sesi tidak tersedia' }}"
+                       {{ !$chat ? 'disabled' : '' }}
+                       autocomplete="off">
+                <button id="btnSendMain" class="btn-send-modern" {{ !$chat ? 'disabled' : '' }}>
+                    <i class="icofont-paper-plane"></i>
+                </button>
             </div>
-
-        </div>
-
-        <!-- KEMBALI -->
-        <div class="back-link-container">
-            <a href="{{ url()->previous() }}" class="back-link">
-                ← Kembali ke daftar dokter
-            </a>
-        </div>
+            <div id="statusIndicator" class="text-center mt-2 small text-muted" style="display:none; font-size: 10px;">
+                <i class="icofont-spinner-alt-3 icofont-spin"></i> Mengirim...
+            </div>
+        </header>
 
     </div>
-</section>
+</div>
 
+@push('scripts')
 <script>
-    const chatMessages   = document.getElementById('chatMessages');
-    const messageInput   = document.getElementById('messageInput');
-    const sendBtn        = document.getElementById('sendBtn');
-    const errorMessage   = document.getElementById('errorMessage');
+    const viewport = document.getElementById('chatViewport');
+    const input = document.getElementById('msgInputMain');
+    const sendBtn = document.getElementById('btnSendMain');
+    const statusIdx = document.getElementById('statusIndicator');
 
     @if($chat)
-        const chatDokterId = '{{ $chat->chatDokterId }}';
-        const sendUrl      = '{{ url("landing/dokter/message") }}/' + chatDokterId + '/send';
-        const getUrl       = '{{ url("landing/dokter/message") }}/' + chatDokterId + '/get';
-        const csrfToken    = '{{ csrf_token() }}';
+        const chatID = '{{ $chat->chatDokterId }}';
+        const sendUrl = '{{ url("landing/dokter/message") }}/' + chatID + '/send';
+        const getUrl = '{{ url("landing/dokter/message") }}/' + chatID + '/get';
+        const csrfToken = '{{ csrf_token() }}';
     @endif
 
-    let welcomeRemoved = false;
-    let isLoading      = false;
-    let lastMessageId  = 0;
+    let lastID = 0;
+    let isSending = false;
 
-    function removeWelcome() {
-        if (!welcomeRemoved) {
-            const welcome = document.getElementById('welcomeMsg');
-            if (welcome) welcome.remove();
-            welcomeRemoved = true;
-        }
-    }
+    function renderMessage(msg, type) {
+        // Remove welcome msg
+        const welcome = document.getElementById('welcomeMsg');
+        if(welcome) welcome.remove();
 
-    function escapeHtml(text) {
+        const isMe = type === 'customer';
         const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    function displayMessage(msg, senderType) {
-        removeWelcome();
-
-        const isSent = senderType === 'customer';
-        const row    = document.createElement('div');
-        row.className = `message-row ${isSent ? 'sent' : 'received'}`;
-        row.dataset.id = msg.id || '';
-
-        row.innerHTML = `
-            <div class="message-content">
-                ${!isSent ? `<div class="message-sender">Dr. {{ $dokter->dokterName }}</div>` : ''}
-                <div class="message-bubble">${escapeHtml(msg.message || msg)}</div>
-                <div class="message-time">${msg.created_at || ''}</div>
+        div.className = `msg-row ${isMe ? 'sent' : 'received'}`;
+        
+        div.innerHTML = `
+            <div class="msg-bubble">
+                ${msg.message || msg}
+                <span class="msg-time">${msg.created_at || 'Baru saja'}</span>
             </div>
         `;
 
-        chatMessages.appendChild(row);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        viewport.appendChild(div);
+        viewport.scrollTop = viewport.scrollHeight;
 
-        if (msg.id && msg.id > lastMessageId) {
-            lastMessageId = msg.id;
-        }
+        if (msg.id && msg.id > lastID) lastID = msg.id;
     }
 
-    function showError(text) {
-        errorMessage.textContent = text;
-        errorMessage.style.display = 'block';
-        setTimeout(() => { errorMessage.style.display = 'none'; }, 4000);
-    }
-
-    // Load history
-    function loadChatHistory() {
+    async function pollMessages() {
         @if($chat)
-        fetch(getUrl, {
-            headers: { 'X-CSRF-TOKEN': csrfToken }
-        })
-        .then(res => res.json())
-        .then(messages => {
-            if (messages.length > 0) {
-                // Hanya render pesan baru
-                const newMessages = messages.filter(m => m.id > lastMessageId);
-                if (newMessages.length > 0) {
-                    removeWelcome();
-                    newMessages.forEach(msg => displayMessage(msg, msg.sender_type));
-                }
+        try {
+            const res = await fetch(getUrl);
+            const data = await res.json();
+            if(data && data.length > 0) {
+                data.filter(m => m.id > lastID).forEach(m => renderMessage(m, m.sender_type));
             }
-        })
-        .catch(err => console.error('Error loading messages:', err));
+        } catch(e) { console.error("Poll Error", e); }
         @endif
     }
 
-    // Send message
-    @if($chat)
-    function sendMessage() {
-        const message = messageInput.value.trim();
-        if (!message || isLoading) return;
+    async function doSend() {
+        const val = input.value.trim();
+        if(!val || isSending) return;
 
-        isLoading          = true;
-        sendBtn.disabled   = true;
-        sendBtn.innerHTML  = '<span class="loading-spinner"></span>';
-        errorMessage.style.display = 'none';
-
-        fetch(sendUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({ message })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                displayMessage(data.message, 'customer');
-                if (data.reply) {
-                    displayMessage(data.reply, 'dokter');
-                }
-                messageInput.value = '';
-                messageInput.focus();
-            } else {
-                showError(data.error || 'Gagal mengirim pesan');
+        isSending = true;
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<div class="dot-loader"><div class="dot"></div><div class="dot"></div></div>';
+        
+        try {
+            const res = await fetch(sendUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({ message: val })
+            });
+            const data = await res.json();
+            if(data.success) {
+                renderMessage(data.message, 'customer');
+                if(data.reply) renderMessage(data.reply, 'dokter');
+                input.value = '';
+                input.focus();
             }
-        })
-        .catch(() => showError('Gagal mengirim pesan. Periksa koneksi Anda.'))
-        .finally(() => {
-            isLoading         = false;
-            sendBtn.disabled  = false;
-            sendBtn.innerHTML = '<i class="icofont-send-mail"></i> Kirim';
-        });
+        } catch(e) { 
+            alert("Gagal mengirim pesan.");
+        } finally {
+            isSending = false;
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="icofont-paper-plane"></i>';
+        }
     }
 
-    sendBtn.addEventListener('click', sendMessage);
-
-    messageInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
-    @endif
-
-    // Init
-    document.addEventListener('DOMContentLoaded', function() {
-        loadChatHistory();
-        @if($chat)
-            messageInput.focus();
-        @endif
-    });
-
-    // Auto reload setiap 5 detik
-    @if($chat)
-        setInterval(loadChatHistory, 5000);
-    @endif
+    if(sendBtn) {
+        sendBtn.addEventListener('click', doSend);
+        input.addEventListener('keypress', e => { if(e.key === 'Enter') doSend(); });
+        
+        // Polling
+        setInterval(pollMessages, 4000);
+        pollMessages(); // Initial load
+    }
 </script>
+@endpush
 
 @endsection

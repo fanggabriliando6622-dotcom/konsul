@@ -54,4 +54,32 @@ class LandingController extends Controller
     {
         return view('landing.produk.produk');
     }
+
+    public function ksinvestasi()
+    {
+        return view('landing.artikel.ksinvestasi');
+    }
+
+    public function ksditanganmu()
+    {
+        return view('landing.artikel.ksditanganmu');
+    }
+
+    public function tubuhsehat()
+    {
+        return view('landing.artikel.tubuhsehat');
+    }
+    public function kstubuhmental()
+    {
+        return view('landing.artikel.kstubuhmental');
+    }
+    public function nutrisi(){
+        return view('landing.artikel.nutrisi');
+    }
+    public function mental(){
+        return view('landing.artikel.mental');
+    }
+    public function gaya(){
+        return view('landing.artikel.gaya');
+    }
 }

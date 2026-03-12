@@ -51,7 +51,7 @@ class CartController extends Controller
                     ->first();
 
         if($cart){
-            $cart->increment('qty', $request->qty);
+            $cart->update(['qty' => $request->qty]);
         }else{
             Cart::create([
                 'customerId' => $customer->customerId,

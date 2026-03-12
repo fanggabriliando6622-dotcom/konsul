@@ -46,7 +46,10 @@ class OrderController extends Controller
 
         // Validasi input
         $request->validate([
-            'metodePembayaran' => 'required|in:transfer,kartu,gopay,ovo',
+            'nama_penerima' => 'required|string|max:100',
+            'no_telp_penerima' => 'required|string|max:20',
+            'alamat_pengiriman' => 'required|string',
+            'metodePembayaran' => 'required|string',
         ]);
 
         // Ambil cart items
@@ -77,7 +80,10 @@ class OrderController extends Controller
             'pemesananId' => $pemesananId,
             'customerId' => $customer->customerId,
             'date' => date('Y-m-d'),
-            'totalPrice' => $total
+            'totalPrice' => $total,
+            'nama_penerima' => $request->nama_penerima,
+            'no_telp_penerima' => $request->no_telp_penerima,
+            'alamat_pengiriman' => $request->alamat_pengiriman,
         ]);
 
         // Generate dan buat detail pemesanan untuk setiap item
@@ -125,7 +131,7 @@ class OrderController extends Controller
             'amount' => $total,
             'metodePembayaran' => $request->metodePembayaran,
             'date' => date('Y-m-d'),
-            'status' => 'pending'
+            'status' => 'paid'
         ]);
 
         // Hapus cart items customer ini

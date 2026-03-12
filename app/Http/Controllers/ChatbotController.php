@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\ChatMessage;
+use App\Models\Produk;
+use App\Models\Dokter;
 use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
@@ -45,6 +47,49 @@ class ChatbotController extends Controller
                 ], 500);
             }
 
+            // Fetch Products and Doctors data for context
+            $produkContext = Produk::select('produkName', 'price')
+                ->get()
+                ->map(fn($p) => "- {$p->produkName}: Rp " . number_format($p->price, 0, ',', '.'))
+                ->join("\n");
+
+            $dokterContext = Dokter::select('dokterName', 'namaBidang', 'hargaKonsultasi')
+                ->get()
+                ->map(fn($d) => "- {$d->dokterName} ({$d->namaBidang}): Rp " . number_format($d->hargaKonsultasi, 0, ',', '.'))
+                ->join("\n");
+
+            $systemPrompt = "Kamu adalah AI Specialist dari RuangKonsul. Tugas utamamu adalah memberikan informasi yang berkaitan dengan kesehatan, konsultasi medis, dan layanan di website RuangKonsul.
+
+INFORMASI LAYANAN:
+RuangKonsul adalah platform layanan kesehatan digital terpercaya. Kami menyediakan:
+1. Konsultasi Dokter (Chat Dokter): Layanan chat privat dengan dokter profesional.
+2. Penjualan Alat Kesehatan (ALKES): Berbagai produk alat kesehatan berkualitas.
+3. Layanan Spesialisasi:
+   - Kesehatan Mental: Mengelola stres, kecemasan, dan kesehatan jiwa.
+   - Kesehatan Seksual: Konsultasi privat dan profesional.
+   - Parenting: Pendampingan tumbuh kembang anak.
+   - Gaya Hidup Sehat: Panduan pola hidup seimbang.
+   - Penyakit Kronis: Pengelolaan penyakit jangka panjang (seperti diabetes, hipertensi).
+   - Gizi / Nutrisi: Konsultasi pemenuhan kebutuhan nutrisi tubuh.
+
+INFORMASI KESEHATAN (BLOG):
+- 'Mens sana in corpore sano' (Jiwa yang sehat dalam tubuh yang sehat).
+- Pentingnya deteksi dini (cek tekanan darah, gula darah, kolesterol) untuk mencegah penyakit kronis.
+- Kesehatan mental sama pentingnya dengan kesehatan fisik; hindari burnout dengan self-care dan istirahat yang cukup.
+
+DATA PRODUK ALKES:
+{$produkContext}
+
+DATA HARGA CHAT DOKTER:
+{$dokterContext}
+
+INSTRUKSI KHUSUS:
+1. Jika pengguna bertanya tentang harga produk ALKES atau biaya chat dokter, berikan informasi berdasarkan data di atas.
+2. Jika pengguna meminta filter harga 'terjangkau' (termurah) atau 'tertinggi' (termahal), lakukan analisis pada data di atas dan sebutkan produk atau dokter yang sesuai.
+3. Jawablah pertanyaan seputar kesehatan umum menggunakan pengetahuan medis yang benar, namun tetap kaitkan dengan layanan RuangKonsul jika memungkinkan.
+4. SANGAT PENTING: Jika pengguna bertanya tentang hal-hal di luar kesehatan (seperti politik, hobi, hiburan, resep masakan non-diet, teknologi umum, atau topik lain yang tidak relevan), kamu HARUS menolak menjawab dengan sopan.
+5. Berikan respon yang profesional, empati, dan informatif dalam bahasa Indonesia.";
+
             // Call OpenRouter API
             $response = Http::timeout(env('OPENROUTER_API_TIMEOUT', 30))
                 ->withHeaders([
@@ -58,7 +103,7 @@ class ChatbotController extends Controller
                     'messages' => [
                         [
                             'role' => 'system',
-                            'content' => 'Kamu adalah AI Specialist dari RuangKonsul. Tugas utamamu adalah memberikan informasi yang berkaitan dengan kesehatan, konsultasi medis, dan layanan di website RuangKonsul. SANGAT PENTING: Jika pengguna bertanya tentang hal-hal di luar kesehatan (seperti politik, hobi, hiburan, resep masakan non-diet, teknologi umum, atau topik lain yang tidak relevan dengan layanan kesehatan kami), kamu HARUS menolak menjawab dengan sopan dan menjelaskan bahwa kamu hanya didesain untuk membantu pertanyaan seputar kesehatan dan layanan di RuangKonsul. Jangan berikan jawaban untuk topik di luar kesehatan meskipun kamu mengetahuinya. Berikan respon yang profesional, empati, dan informatif hanya untuk topik kesehatan.'
+                            'content' => $systemPrompt
                         ],
                         [
                             'role' => 'user',
@@ -91,8 +136,20 @@ class ChatbotController extends Controller
                 ]);
             }
 
+            $replyMessage = $data['choices'][0]['message']['content'];
+
+            // Save AI reply
+            ChatMessage::create([
+                'chatDokterId'  => null,
+                'customerId'    => $customerId,
+                'message'       => $replyMessage,
+                'sender_type'   => 'bot',
+                'chat_type'     => 'bot',
+                'created_at'    => now()
+            ]);
+
             return response()->json([
-                'reply' => $data['choices'][0]['message']['content']
+                'reply' => $replyMessage
             ]);
 
         } catch (\Exception $e) {

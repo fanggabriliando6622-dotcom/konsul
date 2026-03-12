@@ -8,51 +8,7 @@
 @push('styles')
 <style>
 
-.page-hero-privacy{
-    background: linear-gradient(135deg,#1e88e5,#1565c0);
-    padding:80px 20px;
-    border-radius:25px;
-    position:relative;
-    overflow:hidden;
-    text-align:center;
-}
-
-.page-hero-privacy::before{
-    content:'';
-    position:absolute;
-    width:350px;
-    height:350px;
-    background:rgba(255,255,255,0.07);
-    border-radius:50%;
-    top:-100px;
-    right:-100px;
-}
-
-.page-hero-privacy::after{
-    content:'';
-    position:absolute;
-    width:250px;
-    height:250px;
-    background:rgba(255,255,255,0.05);
-    border-radius:50%;
-    bottom:-80px;
-    left:-80px;
-}
-
-.page-hero-privacy h1{
-    color:#fff;
-    font-weight:800;
-    font-size:42px;
-}
-
-.page-hero-privacy p{
-    color:#e3f2fd;
-    font-size:17px;
-    margin-top:10px;
-}
-
 .policy-wrapper{
-    margin-top:-60px;
     position:relative;
     z-index:10;
 }
@@ -61,14 +17,15 @@
     background:#ffffff;
     border-radius:20px;
     padding:35px;
-    box-shadow:0 10px 50px rgba(21,101,192,0.08);
+    box-shadow:0 10px 50px rgba(0,42,106,0.05);
     margin-bottom:20px;
+    border: 1px solid rgba(0,0,0,0.04);
 }
 
 .policy-card h4,
 .policy-card h5,
 .policy-card h6{
-    color:#1565c0;
+    color:#223a66;
     font-weight:700;
 }
 
@@ -82,7 +39,7 @@
     padding-left:35px;
     position:relative;
     font-size:15px;
-    color:#455a64;
+    color:#6b7c93;
 }
 
 .policy-list li::before{
@@ -92,7 +49,7 @@
     top:0;
     width:22px;
     height:22px;
-    background:#1565c0;
+    background:#e12454;
     color:#fff;
     border-radius:50%;
     text-align:center;
@@ -101,7 +58,7 @@
 }
 
 .policy-footer{
-    background:#e3f2fd;
+    background:rgba(225,36,84,0.05);
     padding:15px;
     border-radius:10px;
     font-size:13px;
@@ -110,30 +67,50 @@
 
 .contact-btn{
     border-radius:30px;
-    padding:6px 18px;
+    padding:10px 24px;
+    background: transparent;
+    color: #223a66;
+    border: 2px solid #223a66;
+    font-weight: 700;
+}
+.contact-btn:hover {
+    background: #223a66;
+    color: #fff;
 }
 
 @media(max-width:768px){
-    .page-hero-privacy h1{
-        font-size:30px;
-    }
-
     .policy-card{
         padding:25px;
     }
 }
-
 </style>
 @endpush
 
 
-<section class="py-5">
-  <div class="container">
-
-    <div class="page-hero-privacy">
-        <h1>Kebijakan Privasi</h1>
-        <p>Privasi Anda penting — berikut ringkasan bagaimana kami mengelola data Anda.</p>
+<!-- ===== HERO ===== -->
+<section class="rk-hero">
+    <div class="rk-hero-dots">
+        <span></span><span></span><span></span><span></span>
     </div>
+    <div class="container">
+        <div class="rk-hero-inner">
+            <div class="rk-hero-badge">
+                <i class="icofont-shield-alt"></i> Kebijakan
+            </div>
+            <h1>Kebijakan <span>Privasi</span></h1>
+            <p class="rk-hero-desc">Privasi Anda penting — berikut ringkasan bagaimana kami mengelola data Anda.</p>
+        </div>
+    </div>
+</section>
+
+<div class="rk-wave">
+    <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 80L48 74.7C96 69.3 192 58.7 288 53.3C384 48 480 48 576 53.3C672 58.7 768 69.3 864 69.3C960 69.3 1056 58.7 1152 48C1248 37.3 1344 26.7 1392 21.3L1440 16V80H1392C1344 80 1248 80 1152 80C1056 80 960 80 864 80C768 80 672 80 576 80C480 80 384 80 288 80C192 80 96 80 48 80H0Z" fill="white"/>
+    </svg>
+</div>
+
+<section class="py-5" style="margin-top:-60px;">
+  <div class="container">
 
     <div class="policy-wrapper">
         <div class="row">

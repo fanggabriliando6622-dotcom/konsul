@@ -30,6 +30,10 @@ class ProduksTable
                     ->disk('public')        // ✅ ambil dari storage/app/public
                     ->width(60)
                     ->height(60),           // ✅ hapus ->directory(), path sudah tersimpan lengkap di DB
+                TextColumn::make('Tanggal_Kadaluwarsa')
+                    ->label('Tgl Kadaluwarsa')
+                    ->date()
+                    ->sortable(),
                 TextColumn::make('kategoriId')
                     ->searchable(),
                 TextColumn::make('adminId')
@@ -39,7 +43,7 @@ class ProduksTable
             ->recordActions([
                 EditAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),

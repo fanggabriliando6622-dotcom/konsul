@@ -6,15 +6,27 @@
 
 @section('content')
 
-<section class="page-header" style="background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));">
-  <div class="container">
-    <h1>Produk Kesehatan RuangKonsul</h1>
-    <p>
-      Beragam solusi kesehatan terpercaya untuk mendukung kesejahteraan mental,
-      fisik, dan keluarga Anda.
-    </p>
-  </div>
+<!-- ===== HERO ===== -->
+<section class="rk-hero">
+    <div class="rk-hero-dots">
+        <span></span><span></span><span></span><span></span>
+    </div>
+    <div class="container">
+        <div class="rk-hero-inner">
+            <div class="rk-hero-badge">
+                <i class="icofont-heartbeat"></i> Produk
+            </div>
+            <h1>Produk Kesehatan <span>RuangKonsul</span></h1>
+            <p class="rk-hero-desc">Beragam solusi kesehatan terpercaya untuk mendukung kesejahteraan mental, fisik, dan keluarga Anda.</p>
+        </div>
+    </div>
 </section>
+
+<div class="rk-wave">
+    <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 80L48 74.7C96 69.3 192 58.7 288 53.3C384 48 480 48 576 53.3C672 58.7 768 69.3 864 69.3C960 69.3 1056 58.7 1152 48C1248 37.3 1344 26.7 1392 21.3L1440 16V80H1392C1344 80 1248 80 1152 80C1056 80 960 80 864 80C768 80 672 80 576 80C480 80 384 80 288 80C192 80 96 80 48 80H0Z" fill="white"/>
+    </svg>
+</div>
 
 <!-- ===== PRODUK ===== -->
 <section class="section py-5">
@@ -100,7 +112,7 @@
         @endphp
 
         <!-- {{ $kategori->kategoriName }} -->
-        <div class="col-lg-4 col-md-6 mb-4 product-item {{ $filterClass }}">
+        <div class="col-lg-4 col-md-6 mb-4 product-item {{ $filterClass }} rk-reveal rk-up rk-stagger" style="--s:{{ $loop->index % 6 }};">
           <div class="product-card">
             <div class="product-icon"><i class="{{ $iconClass }}"></i></div>
             <h4>{{ $kategori->kategoriName }}</h4>

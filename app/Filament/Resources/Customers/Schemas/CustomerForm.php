@@ -32,7 +32,6 @@ class CustomerForm
                     ->directory('images/profile')
                     ->visibility('public')
                     ->avatar()
-                    ->circular()
                     ->fetchFileInformation(true)
                     ->previewable(false)
                     ->openable()

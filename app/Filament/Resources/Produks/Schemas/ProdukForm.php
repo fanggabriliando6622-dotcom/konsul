@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Produks\Schemas;
 
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -24,6 +25,10 @@ class ProdukForm
                     ->prefix('Rp'),
                 TextInput::make('qty')
                     ->numeric()
+                    ->required(),
+
+                DatePicker::make('Tanggal_Kadaluwarsa')
+                    ->label('Tanggal Kadaluwarsa')
                     ->required(),
 
                 FileUpload::make('gambar')

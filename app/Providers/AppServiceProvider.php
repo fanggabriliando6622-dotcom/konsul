@@ -20,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (str_contains(request()->url(), 'trycloudflare.com') || request()->header('X-Forwarded-Proto') === 'https') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         // Share menu navbar ke layout navbar
         View::composer('layouts.partials.header', function ($view) {
 
@@ -45,9 +49,7 @@ class AppServiceProvider extends ServiceProvider
                 ],
                 [
                     'title' => 'Blog',
-                    'dropdown' => [
-                        ['title' => 'Blog', 'url' => '/blog'],
-                    ],
+                    'url'   => '/blog',
                 ],
                 [
                     'title' => 'Kontak',
