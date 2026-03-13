@@ -1,4 +1,4 @@
-FROM php:8.2-cli
+FROM php:8.4-cli
 
 WORKDIR /app
 
@@ -6,7 +6,9 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     unzip \
-    libzip-dev
+    libzip-dev \
+    libicu-dev \
+    && docker-php-ext-install zip intl opcache
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
