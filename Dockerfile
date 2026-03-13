@@ -2,6 +2,8 @@ FROM php:8.4-cli
 
 WORKDIR /app
 
+ARG CACHE_BUST=2
+
 RUN apt-get update && apt-get install -y \
     git \
     curl \
