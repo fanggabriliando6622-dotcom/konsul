@@ -17,7 +17,7 @@ return new class extends Migration
     $table->integer('price')->nullable();
     $table->integer('qty')->nullable();
     $table->string('gambar', 255)->nullable();
-    $table->string('kategorild', 5)->nullable();
+    $table->string('kategoriId', 5)->nullable();
     $table->string('adminId', 5)->nullable();
     $table->date('Tanggal_Kadaluwarsa')->nullable();
 });
