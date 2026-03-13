@@ -4,15 +4,15 @@ nixPkgs = [
     'php84Packages.composer',
     'php84Extensions.pdo',
     'php84Extensions.pdo_mysql',
-    'php84Extensions.mysqli',
-    'nginx',
-    'nodejs_20'
+    'php84Extensions.mysqli'
 ]
 
 [phases.install]
 cmds = [
     'composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader'
 ]
+
+[phases.build]
 
 [start]
 cmd = 'php artisan serve --host=0.0.0.0 --port=$PORT'
