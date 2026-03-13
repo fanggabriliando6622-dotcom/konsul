@@ -24,13 +24,8 @@ cmds = [
 [phases.build]
 cmds = [
     'npm ci && npm run build || echo "Skipping npm build"',
-    'php artisan storage:link || echo "Storage link already exists"',
-    'php artisan config:cache',
-    'php artisan route:cache',
-    'php artisan view:cache',
-    'php artisan filament:optimize || echo "Filament optimize skipped"',
     'chmod -R 775 storage bootstrap/cache'
 ]
 
 [start]
-cmd = 'php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT'
+cmd = 'php artisan serve --host=0.0.0.0 --port=$PORT'
