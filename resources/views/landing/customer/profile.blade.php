@@ -38,7 +38,10 @@
                         <!-- Avatar Container -->
                         <div class="avatar-wrapper mb-4 mx-auto position-relative">
                             @if($customer->avatar)
-                                <img src="{{ asset($customer->avatar) }}" 
+                                @php
+                                    $avatarPath = file_exists(public_path($customer->avatar)) ? asset($customer->avatar) : asset('storage/' . $customer->avatar);
+                                @endphp
+                                <img src="{{ $avatarPath }}" 
                                      alt="Avatar {{ $customer->customerName }}" 
                                      class="profile-avatar shadow-sm">
                             @else

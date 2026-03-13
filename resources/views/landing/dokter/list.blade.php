@@ -324,7 +324,7 @@
                     <!-- Floating Avatar -->
                     <div class="doctor-avatar-wrapper">
                         @php
-                          $imagePath = file_exists(public_path($d->gambar)) ? asset($d->gambar) : asset('storage/' . $d->gambar);
+                          $imagePath = $d->gambar ? (file_exists(public_path($d->gambar)) ? asset($d->gambar) : asset('storage/' . $d->gambar)) : 'https://ui-avatars.com/api/?name=' . urlencode($d->dokterName) . '&background=random';
                         @endphp
                         <img src="{{ $imagePath }}"
                              class="doctor-avatar shadow-lg"

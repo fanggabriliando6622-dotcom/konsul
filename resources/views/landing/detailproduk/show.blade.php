@@ -269,8 +269,11 @@
                         <div class="product-image-container">
                             @php
                                 $prodImg = $produk->gambar ?? '';
-                                $finalImg = file_exists(public_path($prodImg)) ? asset($prodImg) : asset('storage/' . $prodImg);
-                                if(empty($prodImg)) $finalImg = asset('images/no-image.png');
+                                if ($prodImg) {
+                                    $finalImg = file_exists(public_path($prodImg)) ? asset($prodImg) : asset('storage/' . $prodImg);
+                                } else {
+                                    $finalImg = 'https://placehold.co/400x400/f8fafd/223a66?text=' . urlencode($produk->produkName);
+                                }
                             @endphp
                             <img src="{{ $finalImg }}" alt="{{ $produk->produkName }}">
                             

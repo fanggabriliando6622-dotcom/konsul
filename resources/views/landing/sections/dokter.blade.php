@@ -115,7 +115,7 @@
                 <div class="card-body pt-4 d-flex flex-column align-items-center mt-2 position-relative z-1">
                     
                     @php
-                      $imagePath = file_exists(public_path($d->gambar)) ? asset($d->gambar) : asset('storage/' . $d->gambar);
+                      $imagePath = $d->gambar ? (file_exists(public_path($d->gambar)) ? asset($d->gambar) : asset('storage/' . $d->gambar)) : 'https://ui-avatars.com/api/?name=' . urlencode($d->dokterName) . '&background=random';
                     @endphp
                     
                     <div class="doctor-avatar-container mb-3 shadow-sm">
