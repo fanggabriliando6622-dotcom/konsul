@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     libicu-dev \
-    && docker-php-ext-install zip intl opcache pdo pdo_mysql
+    && docker-php-ext-install zip intl opcache
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
