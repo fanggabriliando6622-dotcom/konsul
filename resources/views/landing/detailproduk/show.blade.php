@@ -388,11 +388,6 @@ document.addEventListener('DOMContentLoaded', function(){
     // Handle Add to Cart
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', function() {
-            @guest('customer')
-                window.location.href = '{{ route("login") }}';
-                return;
-            @endguest
-            
             const produkId = this.dataset.id;
             const originalIcon = this.innerHTML;
             this.innerHTML = '<i class="icofont-spinner-alt-3 icofont-spin"></i>';
@@ -416,10 +411,6 @@ document.addEventListener('DOMContentLoaded', function(){
                 if(js.success) {
                     // Update header cart count if possible or just show toast
                     alert('Produk berhasil ditambahkan ke keranjang!');
-                    const cartCountBadge = document.getElementById('cart-count');
-                    if(cartCountBadge) {
-                        cartCountBadge.innerText = js.cart_count;
-                    }
                 } else {
                     alert('Gagal: ' + (js.error || 'Terjadi kesalahan'));
                 }
@@ -461,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Confirm Buy Now
     document.getElementById('confirmBuyNowBtn').addEventListener('click', function() {
-        @guest('customer')
+        @guest
             window.location.href = '{{ route("login") }}';
             return;
         @endguest
