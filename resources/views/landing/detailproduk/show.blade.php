@@ -416,6 +416,10 @@ document.addEventListener('DOMContentLoaded', function(){
                 if(js.success) {
                     // Update header cart count if possible or just show toast
                     alert('Produk berhasil ditambahkan ke keranjang!');
+                    const cartCountBadge = document.getElementById('cart-count');
+                    if(cartCountBadge) {
+                        cartCountBadge.innerText = js.cart_count;
+                    }
                 } else {
                     alert('Gagal: ' + (js.error || 'Terjadi kesalahan'));
                 }

@@ -42,21 +42,24 @@ class CartController extends Controller
 
         // Validasi stok produk
         $produk = Produk::findOrFail($request->produk_id);
-        if ($request->qty > $produk->qty) {
-            return response()->json(['success' => false, 'error' => 'Jumlah melebihi stok tersedia'], 400);
-        }
-
+        
         $cart = Cart::where('customerId', $customer->customerId)
                     ->where('produkId', $request->produk_id)
                     ->first();
 
+        $newQty = $cart ? $cart->qty + $request->qty : $request->qty;
+
+        if ($newQty > $produk->qty) {
+            return response()->json(['success' => false, 'error' => 'Jumlah melebihi stok tersedia'], 400);
+        }
+
         if($cart){
-            $cart->update(['qty' => $request->qty]);
+            $cart->update(['qty' => $newQty]);
         }else{
             Cart::create([
                 'customerId' => $customer->customerId,
                 'produkId'   => $request->produk_id,
-                'qty'        => $request->qty
+                'qty'        => $newQty
             ]);
         }
 
