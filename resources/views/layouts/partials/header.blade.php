@@ -128,7 +128,7 @@
                                 @forelse($cartItems as $item)
                                     <div class="d-flex mb-3 border-bottom pb-2">
                                         <div style="width:50px; height:50px;">
-                                            <img src="{{ asset('storage/' . ($item->produk->gambar ?? '')) }}"
+                                            <img src="{{ asset($item->produk->gambar ?? 'images/no-image.png') }}"
                                                  style="width:100%; height:100%; object-fit:cover;">
                                         </div>
 
@@ -150,7 +150,7 @@
                                     @foreach(session('cart') as $item)
                                         <div class="d-flex mb-3 border-bottom pb-2">
                                             <div style="width:50px; height:50px;">
-                                                <img src="{{ asset('storage/' . $item['gambar']) }}"
+                                                <img src="{{ asset($item['gambar'] ?? 'images/no-image.png') }}"
                                                      style="width:100%; height:100%; object-fit:cover;">
                                             </div>
 
@@ -189,7 +189,7 @@
                                 @if($authCustomer->avatar)
                                     <img src="{{ asset($authCustomer->avatar) }}"
                                          alt="{{ $authCustomer->customerName }}"
-                                         style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; ">
+                                         style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                                 @else
                                     <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #223a66, #e12454); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">
                                         {{ strtoupper(substr($authCustomer->customerName, 0, 1)) }}
@@ -236,37 +236,34 @@
     </nav>
 </header>
 
-    @if(session('welcome') && Auth::guard('customer')->check())
-        <div id="welcomeToast" style="position:fixed;top:90px;right:20px;z-index:2000;">
-            <div style="background:linear-gradient(135deg,#223a66,#2b4c7e);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(34,58,102,0.25);min-width:260px;display:flex;align-items:center;gap:12px;">
-                <div style="font-size:22px;">👋</div>
-                <div style="flex:1">
-                    <div style="font-weight:700;font-size:15px;">Selamat datang, {{ Auth::guard('customer')->user()->customerName }}!</div>
-                    <div style="font-size:13px;opacity:0.9;margin-top:4px;">Senang melihat Anda kembali. Lanjutkan kebutuhan kesehatan Anda.</div>
-                </div>
-                <button id="welcomeClose" style="background:transparent;border:none;color:rgba(255,255,255,0.9);font-size:18px;cursor:pointer;">✖</button>
+@if(session('welcome') && Auth::guard('customer')->check())
+    <div id="welcomeToast" style="position:fixed;top:90px;right:20px;z-index:2000;">
+        <div style="background:linear-gradient(135deg,#223a66,#2b4c7e);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(34,58,102,0.25);min-width:260px;display:flex;align-items:center;gap:12px;">
+            <div style="font-size:22px;">👋</div>
+            <div style="flex:1">
+                <div style="font-weight:700;font-size:15px;">Selamat datang, {{ Auth::guard('customer')->user()->customerName }}!</div>
+                <div style="font-size:13px;opacity:0.9;margin-top:4px;">Senang melihat Anda kembali. Lanjutkan kebutuhan kesehatan Anda.</div>
             </div>
+            <button id="welcomeClose" style="background:transparent;border:none;color:rgba(255,255,255,0.9);font-size:18px;cursor:pointer;">✖</button>
         </div>
+    </div>
 
-        <style>
-            #welcomeToast { animation: rk-slide-in 450ms cubic-bezier(.2,.9,.3,1); }
-            #welcomeToast.hide { animation: rk-slide-out 350ms forwards cubic-bezier(.2,.9,.3,1); }
-            @keyframes rk-slide-in { from { transform: translateY(-8px); opacity:0 } to { transform: translateY(0); opacity:1 } }
-            @keyframes rk-slide-out { from { transform: translateY(0); opacity:1 } to { transform: translateY(-8px); opacity:0 } }
-        </style>
+    <style>
+        #welcomeToast { animation: rk-slide-in 450ms cubic-bezier(.2,.9,.3,1); }
+        #welcomeToast.hide { animation: rk-slide-out 350ms forwards cubic-bezier(.2,.9,.3,1); }
+        @keyframes rk-slide-in { from { transform: translateY(-8px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+        @keyframes rk-slide-out { from { transform: translateY(0); opacity:1 } to { transform: translateY(-8px); opacity:0 } }
+    </style>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function(){
-                var el = document.getElementById('welcomeToast');
-                var btn = document.getElementById('welcomeClose');
-                if(!el) return;
-                // Auto dismiss after 5s
-                var t = setTimeout(function(){ el.classList.add('hide'); }, 5000);
-                // Remove from DOM after animation ends
-                el.addEventListener('animationend', function(e){ if(el.classList.contains('hide')) el.remove(); });
-                // Close on click
-                btn.addEventListener('click', function(){ clearTimeout(t); el.classList.add('hide'); });
-            });
-        </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            var el = document.getElementById('welcomeToast');
+            var btn = document.getElementById('welcomeClose');
+            if(!el) return;
+            var t = setTimeout(function(){ el.classList.add('hide'); }, 5000);
+            el.addEventListener('animationend', function(e){ if(el.classList.contains('hide')) el.remove(); });
+            btn.addEventListener('click', function(){ clearTimeout(t); el.classList.add('hide'); });
+        });
+    </script>
 
-    @endif
+@endif
