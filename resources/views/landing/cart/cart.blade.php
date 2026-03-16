@@ -122,10 +122,9 @@
                                 <td style="width:40%;">
                                     <div class="d-flex align-items-center gap-3">
                                         @php
-                                            $prodImg = $item->produk->gambar ?? '';
-                                            $finalImg = file_exists(public_path($prodImg)) ? asset($prodImg) : asset('storage/' . $prodImg);
-                                            if(empty($prodImg)) $finalImg = asset('images/no-image.png');
-                                        @endphp
+    $prodImg = $item->produk->gambar ?? '';
+    $finalImg = !empty($prodImg) ? asset($prodImg) : asset('images/no-image.png');
+@endphp
                                         <div style="flex-shrink:0;">
                                             <img src="{{ $finalImg }}" class="cart-product-img">
                                         </div>
