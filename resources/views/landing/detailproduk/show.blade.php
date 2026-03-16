@@ -388,6 +388,11 @@ document.addEventListener('DOMContentLoaded', function(){
     // Handle Add to Cart
     document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
         btn.addEventListener('click', function() {
+            @guest('customer')
+                window.location.href = '{{ route("login") }}';
+                return;
+            @endguest
+            
             const produkId = this.dataset.id;
             const originalIcon = this.innerHTML;
             this.innerHTML = '<i class="icofont-spinner-alt-3 icofont-spin"></i>';
@@ -452,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Confirm Buy Now
     document.getElementById('confirmBuyNowBtn').addEventListener('click', function() {
-        @guest
+        @guest('customer')
             window.location.href = '{{ route("login") }}';
             return;
         @endguest
