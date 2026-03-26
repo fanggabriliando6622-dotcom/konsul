@@ -201,20 +201,14 @@ Route::get('/fix', function () {
     return 'Selesai: ' . Artisan::output();
 });
 Route::get('/debug', function () {
-    try {
-        DB::connection()->getPdo();
-        $dbStatus = 'DB OK';
-    } catch (\Exception $e) {
-        $dbStatus = 'DB ERROR: ' . $e->getMessage();
-    }
-
-    // Cek user ada atau tidak
-    $user = DB::table('users')->first();
-
+    // Reset password user pertama jadi 'password123'
+    DB::table('users')
+        ->where('email', 'rashta2911@gmail.com')
+        ->update(['password' => bcrypt('password123')]);
+    
     return response()->json([
-        'db' => $dbStatus,
-        'session_driver' => config('session.driver'),
-        'user_exists' => $user ? 'ADA - email: ' . $user->email : 'TIDAK ADA USER',
-        'user_count' => DB::table('users')->count(),
+        'status' => 'Password berhasil direset',
+        'email' => 'rashta2911@gmail.com',
+        'password_baru' => 'password123',
     ]);
 });
