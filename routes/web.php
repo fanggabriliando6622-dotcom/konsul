@@ -207,12 +207,14 @@ Route::get('/debug', function () {
     } catch (\Exception $e) {
         $dbStatus = 'DB ERROR: ' . $e->getMessage();
     }
-    
+
+    // Cek user ada atau tidak
+    $user = DB::table('users')->first();
+
     return response()->json([
         'db' => $dbStatus,
         'session_driver' => config('session.driver'),
-        'cache_store' => config('cache.default'),
-        'app_key' => config('app.key') ? 'SET' : 'NOT SET',
-        'tables' => DB::select('SHOW TABLES'),
+        'user_exists' => $user ? 'ADA - email: ' . $user->email : 'TIDAK ADA USER',
+        'user_count' => DB::table('users')->count(),
     ]);
 });
