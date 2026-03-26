@@ -23,7 +23,8 @@ class CustomerResource extends Resource
     protected static string | UnitEnum | null $navigationGroup = 'Manajemen Pengguna';
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $recordTitleAttribute = 'customerName';
+    protected static ?string $recordTitleAttribute = 'name';
+
 
     public static function form(Schema $schema): Schema
     {

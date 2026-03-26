@@ -47,7 +47,7 @@
                                             @else
                                                 <div id="avatarPlaceholder" class="profile-avatar shadow-sm d-flex align-items-center justify-content-center mb-3 mx-auto" 
                                                      style="background: linear-gradient(135deg, #223a66, #e12454); color: white; font-size: 48px; font-weight: bold;">
-                                                    {{ strtoupper(substr($customer->customerName, 0, 1)) }}
+                                                    {{ strtoupper(substr($customer->name, 0, 1)) }}
                                                 </div>
                                                 <img id="avatarPreview" src="#" alt="Avatar" class="profile-avatar shadow-sm mb-3 d-none">
                                             @endif
@@ -58,7 +58,7 @@
                                         </label>
                                         <input type="file" id="avatarUpload" name="avatar" class="d-none" accept="image/*" onchange="previewImage(this);">
                                         
-                                        <h5 class="fw-bold text-primary-rk mt-2 mb-1">{{ $customer->customerName }}</h5>
+                                        <h5 class="fw-bold text-primary-rk mt-2 mb-1">{{ $customer->name }}</h5>
                                         <p class="text-muted small">Maksimal ukuran file 2MB <br>(JPG, JPEG, PNG)</p>
                                     </div>
 
@@ -105,13 +105,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group custom-input">
                                                 <label class="form-label small text-muted fw-bold">Nama Lengkap <span class="text-danger">*</span></label>
-                                                <input type="text" name="name" value="{{ old('name', $customer->customerName) }}" class="form-control form-control-lg" required>
+                                                <input type="text" name="name" value="{{ old('name', $customer->name) }}" class="form-control form-control-lg" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group custom-input">
                                                 <label class="form-label small text-muted fw-bold">Alamat Email <span class="text-danger">*</span></label>
-                                                <input type="email" name="email" value="{{ old('email', $customer->customerEmail) }}" class="form-control form-control-lg" required>
+                                                <input type="email" name="email" value="{{ old('email', $customer->email) }}" class="form-control form-control-lg" required>
                                             </div>
                                         </div>
 

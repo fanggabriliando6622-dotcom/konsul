@@ -41,6 +41,10 @@ class Produk extends Model
         'price',
         'qty',
         'gambar',
+        'deskripsi',
+        'kegunaan',
+        'dosis',
+        'efek_samping',
         'Tanggal_Kadaluwarsa'
     ];
 

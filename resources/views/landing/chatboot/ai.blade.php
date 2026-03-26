@@ -411,7 +411,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const bubble = document.createElement("div");
         bubble.className = "bubble";
-        bubble.innerHTML = text;
+        
+        // Simple Markdown-like parsing for bold and bullet points
+        let processedText = text
+            .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') // **bold**
+            .replace(/^\s*-\s+(.*)$/gm, '• $1<br/>') // - list
+            .replace(/\n/g, '<br/>'); // newlines
+
+        bubble.innerHTML = processedText;
 
         wrapper.appendChild(bubble);
         chatbotMessages.appendChild(wrapper);

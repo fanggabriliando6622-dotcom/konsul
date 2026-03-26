@@ -296,7 +296,7 @@
                                         <label class="form-label-rk">Identitas Pasien</label>
                                         <div class="input-icon-wrapper">
                                             <i class="icofont-id-card"></i>
-                                            <input type="text" class="form-control form-control-rk fw-bold" value="{{ auth()->guard('customer')->user()->customerName }}" readonly>
+                                            <input type="text" class="form-control form-control-rk fw-bold" value="{{ auth()->guard('customer')->user()->name }}" readonly>
                                         </div>
                                     </div>
 

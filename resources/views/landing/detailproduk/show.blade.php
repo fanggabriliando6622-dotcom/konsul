@@ -269,10 +269,10 @@
                         <div class="product-image-container">
                             @php
                                 $prodImg = $produk->gambar ?? '';
-                                if ($prodImg) {
-                                    $finalImg = file_exists(public_path($prodImg)) ? asset($prodImg) : asset('storage/' . $prodImg);
+                                if ($prodImg && file_exists(public_path($prodImg))) {
+                                    $finalImg = asset($prodImg);
                                 } else {
-                                    $finalImg = 'https://placehold.co/400x400/f8fafd/223a66?text=' . urlencode($produk->produkName);
+                                    $finalImg = asset('images/produk/logo.png');
                                 }
                             @endphp
                             <img src="{{ $finalImg }}" alt="{{ $produk->produkName }}">
@@ -292,12 +292,52 @@
                             <span class="product-category-label">{{ $kategori->kategoriName }}</span>
                             <h4 class="product-name-rk text-dark">{{ $produk->produkName }}</h4>
                             
+                            @if($produk->deskripsi)
+                            <p class="product-desc-rk text-muted mb-2" style="font-size:13px; line-height:1.6;">{{ Str::limit($produk->deskripsi, 100) }}</p>
+                            @endif
+
                             <div class="product-price-rk">
                                 Rp {{ number_format($produk->price ?? 0, 0, ',', '.') }}
                             </div>
                             <div class="product-stock-text">
                                 <i class="icofont-box me-1"></i> Sisa Stok: <strong>{{ $produk->qty }} unit</strong>
                             </div>
+
+                            <!-- Detail Info Toggle -->
+                            @if($produk->kegunaan || $produk->dosis || $produk->efek_samping)
+                            <div class="product-detail-toggle mb-3">
+                                <a class="btn btn-sm btn-outline-info w-100 rounded-pill" 
+                                   data-toggle="collapse" 
+                                   href="#detailProduk{{ $produk->produkId }}" 
+                                   role="button" 
+                                   aria-expanded="false"
+                                   style="font-size:12px; font-weight:600;">
+                                    <i class="icofont-info-circle me-1"></i> Lihat Detail Produk
+                                </a>
+                                <div class="collapse mt-2" id="detailProduk{{ $produk->produkId }}">
+                                    <div class="card card-body border-0 bg-light" style="border-radius:12px; font-size:13px;">
+                                        @if($produk->kegunaan)
+                                        <div class="mb-2">
+                                            <strong style="color: var(--rk-primary);"><i class="icofont-check-circled me-1"></i> Kegunaan:</strong>
+                                            <p class="mb-1 text-muted ps-3">{{ $produk->kegunaan }}</p>
+                                        </div>
+                                        @endif
+                                        @if($produk->dosis)
+                                        <div class="mb-2">
+                                            <strong style="color: var(--rk-success);"><i class="icofont-pills me-1"></i> Dosis:</strong>
+                                            <p class="mb-1 text-muted ps-3">{{ $produk->dosis }}</p>
+                                        </div>
+                                        @endif
+                                        @if($produk->efek_samping)
+                                        <div class="mb-0">
+                                            <strong style="color: var(--rk-accent);"><i class="icofont-warning me-1"></i> Efek Samping:</strong>
+                                            <p class="mb-0 text-muted ps-3">{{ $produk->efek_samping }}</p>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
 
                             <!-- Actions -->
                             <div class="product-actions-rk">
@@ -452,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Confirm Buy Now
     document.getElementById('confirmBuyNowBtn').addEventListener('click', function() {
-        @guest
+        @guest('customer')
             window.location.href = '{{ route("login") }}';
             return;
         @endguest

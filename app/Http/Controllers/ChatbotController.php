@@ -48,58 +48,61 @@ class ChatbotController extends Controller
             }
 
             // Fetch Products and Doctors data for context
-            $produkContext = Produk::select('produkName', 'price')
+            $produkContext = Produk::select('produkName', 'price', 'qty')
                 ->get()
-                ->map(fn($p) => "- {$p->produkName}: Rp " . number_format($p->price, 0, ',', '.'))
+                ->map(fn($p) => "- {$p->produkName}: Rp " . number_format($p->price, 0, ',', '.') . " (" . ($p->qty > 0 ? "Stok: {$p->qty}" : "Stok Habis") . ")")
                 ->join("\n");
 
-            $dokterContext = Dokter::select('dokterName', 'namaBidang', 'hargaKonsultasi')
+            $dokterContext = Dokter::select('dokterName', 'namaBidang', 'hargaKonsultasi', 'statusDokter')
                 ->get()
-                ->map(fn($d) => "- {$d->dokterName} ({$d->namaBidang}): Rp " . number_format($d->hargaKonsultasi, 0, ',', '.'))
+                ->map(fn($d) => "- {$d->dokterName} ({$d->namaBidang}): Rp " . number_format($d->hargaKonsultasi, 0, ',', '.') . " [" . (strcasecmp($d->statusDokter, 'online') === 0 ? 'Tersedia' : 'Offline') . "]")
                 ->join("\n");
 
-            $systemPrompt = "Kamu adalah AI Specialist dari RuangKonsul. Tugas utamamu adalah memberikan informasi yang berkaitan dengan kesehatan, konsultasi medis, dan layanan di website RuangKonsul.
+            $systemPrompt = "Kamu adalah RuangKonsul AI Assistant, pakar kesehatan dan layanan dari platform RuangKonsul. 
+Tujuanmu adalah membantu pengguna dengan informasi kesehatan yang akurat, menyarankan produk alat kesehatan (ALKES), dan membantu proses konsultasi dengan dokter kami.
 
-INFORMASI LAYANAN:
-RuangKonsul adalah platform layanan kesehatan digital terpercaya. Kami menyediakan:
-1. Konsultasi Dokter (Chat Dokter): Layanan chat privat dengan dokter profesional.
-2. Penjualan Alat Kesehatan (ALKES): Berbagai produk alat kesehatan berkualitas.
-3. Layanan Spesialisasi:
-   - Kesehatan Mental: Mengelola stres, kecemasan, dan kesehatan jiwa.
-   - Kesehatan Seksual: Konsultasi privat dan profesional.
-   - Parenting: Pendampingan tumbuh kembang anak.
-   - Gaya Hidup Sehat: Panduan pola hidup seimbang.
-   - Penyakit Kronis: Pengelolaan penyakit jangka panjang (seperti diabetes, hipertensi).
-   - Gizi / Nutrisi: Konsultasi pemenuhan kebutuhan nutrisi tubuh.
+INFORMASI PLATFORM:
+- Website: RuangKonsul.com
+- Layanan Utama: Konsultasi Dokter Online (Chat Dokter), Toko Alat Kesehatan (ALKES), Blog Kesehatan.
+- Kategori Spesialis: Kesehatan Mental, Kesehatan Seksual, Parenting, Gaya Hidup Sehat, Penyakit Kronis, Gizi & Nutrisi.
 
-INFORMASI KESEHATAN (BLOG):
-- 'Mens sana in corpore sano' (Jiwa yang sehat dalam tubuh yang sehat).
-- Pentingnya deteksi dini (cek tekanan darah, gula darah, kolesterol) untuk mencegah penyakit kronis.
-- Kesehatan mental sama pentingnya dengan kesehatan fisik; hindari burnout dengan self-care dan istirahat yang cukup.
+LAYANAN UNGGULAN:
+1. Chat Dokter: Pasien membayar biaya konsultasi terlebih dahulu, lalu bisa mulai chat privat.
+2. Belanja ALKES: Berbagai alat medis mulai dari vitamin hingga alat diagnostik.
 
-DATA PRODUK ALKES:
+DATA PRODUK ALKES SAAT INI:
 {$produkContext}
 
-DATA HARGA CHAT DOKTER:
+DATA DOKTER & BIAYA KONSULTASI SAAT INI:
 {$dokterContext}
 
-INSTRUKSI KHUSUS:
-1. Jika pengguna bertanya tentang harga produk ALKES atau biaya chat dokter, berikan informasi berdasarkan data di atas.
-2. Jika pengguna meminta filter harga 'terjangkau' (termurah) atau 'tertinggi' (termahal), lakukan analisis pada data di atas dan sebutkan produk atau dokter yang sesuai.
-3. Jawablah pertanyaan seputar kesehatan umum menggunakan pengetahuan medis yang benar, namun tetap kaitkan dengan layanan RuangKonsul jika memungkinkan.
-4. SANGAT PENTING: Jika pengguna bertanya tentang hal-hal di luar kesehatan (seperti politik, hobi, hiburan, resep masakan non-diet, teknologi umum, atau topik lain yang tidak relevan), kamu HARUS menolak menjawab dengan sopan.
-5. Berikan respon yang profesional, empati, dan informatif dalam bahasa Indonesia.";
+PEDOMAN MERESPON:
+1. PERSONAL & EMPATI: Mulailah jawaban dengan nada ramah. Gunakan sapaan yang sopan. Jika pengguna mengeluh sakit, tunjukkan empati.
+2. REKOMENDASI CERDAS: 
+   - Jika pengguna bertanya soal gejala, berikan penjelasan singkat dan SANGAT SARANKAN untuk Chat Dokter. Sebutkan nama dokter spesialis yang relevan dari data di atas beserta harganya.
+   - Jika pengguna butuh alat medis atau suplemen, sarankan produk dari daftar ALKES di atas beserta harganya.
+3. FORMAT JAWABAN: Gunakan Bullet points atau List agar mudah dibaca di layar chat yang kecil. Gunakan **tebal** untuk poin penting.
+4. KEBIJAKAN PRIVASI: Jangan meminta data pribadi yang sangat sensitif (Nomer KTP/Password).
+5. BATASAN TOPIK: Jika ditanya hal di luar kesehatan/layanan (Politik, Hiburan umum, Gosip), jawab dengan: 'Mohon maaf, sebagai asisten RuangKonsul, saya hanya dapat membantu hal-hal seputar kesehatan dan layanan kami.'
+6. CALL TO ACTION: Arahkan user untuk 'Klik menu Chat Dokter' atau 'Cek menu Produk' jika relevan.
+
+Bahasa: Indonesia Formal-Casual (Friendly Professional).";
 
             // Call OpenRouter API
-            $response = Http::timeout(env('OPENROUTER_API_TIMEOUT', 30))
+            $response = Http::timeout(15)
                 ->withHeaders([
-                    'Authorization' => 'Bearer ' . $apiKey,
+                    'Authorization' => 'Bearer ' . config('laravel-openrouter.api_key'),
                     'Content-Type'  => 'application/json',
-                    'HTTP-Referer'  => url('/'),
-                    'X-Title'       => 'RuangKonsul Chatbot'
+                    'HTTP-Referer'  => config('laravel-openrouter.referer', url('/')),
+                    'X-Title'       => config('laravel-openrouter.title', 'RuangKonsul Chatbot')
                 ])
-                ->post($apiEndpoint . 'chat/completions', [
-                    'model' => 'stepfun/step-3.5-flash:free',
+                ->post(config('laravel-openrouter.api_endpoint') . 'chat/completions', [
+                    'models' => [
+                        'google/gemma-3-27b-it:free',
+                        'meta-llama/llama-3.3-70b-instruct:free',
+                        'openrouter/free'
+                    ],
+                    'route' => 'fallback',
                     'messages' => [
                         [
                             'role' => 'system',
@@ -115,28 +118,29 @@ INSTRUKSI KHUSUS:
             if ($response->status() !== 200) {
                 Log::error('OpenRouter API Error', [
                     'status' => $response->status(),
-                    'body' => $response->body(),
-                    'headers' => $response->headers()
+                    'body' => $response->body()
                 ]);
-                
-                return response()->json([
-                    'reply' => 'Server AI tidak merespons. Status: ' . $response->status()
-                ], $response->status());
-            }
 
-            $data = $response->json();
-            
-            if (!isset($data['choices'][0]['message']['content'])) {
-                Log::error('Invalid OpenRouter API response', [
-                    'response' => $data
-                ]);
+                if ($response->status() === 429) {
+                    $replyMessage = 'Mohon maaf, server AI kami sedang sangat sibuk saat ini. Mohon tunggu beberapa detik dan coba lagi.';
+                } elseif ($response->status() === 401) {
+                    $replyMessage = 'Mohon maaf, konfigurasi API Key kami tidak valid atau belum disetel dengan benar. Mohon periksa OPENROUTER_API_KEY.';
+                } else {
+                    $replyMessage = 'Mohon maaf, koneksi ke server AI sedang mengalami gangguan (Error ' . $response->status() . ').';
+                }
+            } else {
+                $data = $response->json();
                 
-                return response()->json([
-                    'reply' => 'AI tidak memberikan balasan yang valid.'
-                ]);
+                if (!isset($data['choices'][0]['message']['content'])) {
+                    Log::error('Invalid OpenRouter API response', [
+                        'response' => $data
+                    ]);
+                    
+                    $replyMessage = 'AI tidak memberikan balasan yang valid. Silakan coba lagi.';
+                } else {
+                    $replyMessage = $data['choices'][0]['message']['content'];
+                }
             }
-
-            $replyMessage = $data['choices'][0]['message']['content'];
 
             // Save AI reply
             ChatMessage::create([
@@ -160,9 +164,21 @@ INSTRUKSI KHUSUS:
                 'line' => $e->getLine()
             ]);
 
+            $fallbackMessage = 'Maaf, koneksi ke sistem kecerdasan buatan sedang terhambat (Timeout). Silakan ketik ulang kalimat Anda sesaat lagi.';
+            
+            // Simpan log cadangan agar tidak corrupt di front-end
+            ChatMessage::create([
+                'chatDokterId'  => null,
+                'customerId'    => $customerId,
+                'message'       => $fallbackMessage,
+                'sender_type'   => 'bot',
+                'chat_type'     => 'bot',
+                'created_at'    => now()
+            ]);
+
             return response()->json([
-                'reply' => 'Terjadi kesalahan: ' . $e->getMessage()
-            ], 500);
+                'reply' => $fallbackMessage
+            ]);
         }
 
     }

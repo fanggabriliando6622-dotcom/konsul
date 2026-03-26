@@ -188,23 +188,23 @@
                                 
                                 @if($authCustomer->avatar)
                                     <img src="{{ asset($authCustomer->avatar) }}"
-                                         alt="{{ $authCustomer->customerName }}"
+                                         alt="{{ $authCustomer->name }}"
                                          style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                                 @else
                                     <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #223a66, #e12454); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px;">
-                                        {{ strtoupper(substr($authCustomer->customerName, 0, 1)) }}
+                                        {{ strtoupper(substr($authCustomer->name, 0, 1)) }}
                                     </div>
                                 @endif
                                 
                                 <span style="font-weight: 700; color: #223a66; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    {{ $authCustomer->customerName }}
+                                    {{ $authCustomer->name }}
                                 </span>
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right" style="border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: none; min-width: 240px; padding: 12px 0; margin-top: 10px;">
                                 <div style="padding: 12px 20px; border-bottom: 1px solid #f0f0f0; margin-bottom: 8px;">
-                                    <div style="font-weight:700; color:#223a66; font-size:15px;">{{ $authCustomer->customerName }}</div>
-                                    <div style="font-size:13px; color:#6F8BA4;">{{ $authCustomer->customerEmail }}</div>
+                                    <div style="font-weight:700; color:#223a66; font-size:15px;">{{ $authCustomer->name }}</div>
+                                    <div style="font-size:13px; color:#6F8BA4;">{{ $authCustomer->email }}</div>
                                 </div>
                                 <a href="{{ route('landing.customer.profile') }}" class="dropdown-item" style="padding: 10px 20px; font-size: 14px; font-weight: 500;">
                                     <i class="icofont-ui-user mr-3" style="color:#223a66; font-size: 18px;"></i> Profil Saya
@@ -241,7 +241,7 @@
         <div style="background:linear-gradient(135deg,#223a66,#2b4c7e);color:white;padding:14px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(34,58,102,0.25);min-width:260px;display:flex;align-items:center;gap:12px;">
             <div style="font-size:22px;">👋</div>
             <div style="flex:1">
-                <div style="font-weight:700;font-size:15px;">Selamat datang, {{ Auth::guard('customer')->user()->customerName }}!</div>
+                <div style="font-weight:700;font-size:15px;">Selamat datang, {{ Auth::guard('customer')->user()->name }}!</div>
                 <div style="font-size:13px;opacity:0.9;margin-top:4px;">Senang melihat Anda kembali. Lanjutkan kebutuhan kesehatan Anda.</div>
             </div>
             <button id="welcomeClose" style="background:transparent;border:none;color:rgba(255,255,255,0.9);font-size:18px;cursor:pointer;">✖</button>

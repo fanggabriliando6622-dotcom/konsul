@@ -42,12 +42,12 @@
                                     $avatarPath = file_exists(public_path($customer->avatar)) ? asset($customer->avatar) : asset('storage/' . $customer->avatar);
                                 @endphp
                                 <img src="{{ $avatarPath }}" 
-                                     alt="Avatar {{ $customer->customerName }}" 
+                                     alt="Avatar {{ $customer->name }}" 
                                      class="profile-avatar shadow-sm">
                             @else
                                 <div class="profile-avatar shadow-sm d-flex align-items-center justify-content-center" 
                                      style="background: linear-gradient(135deg, #223a66, #e12454); color: white; font-size: 48px; font-weight: bold;">
-                                    {{ strtoupper(substr($customer->customerName, 0, 1)) }}
+                                    {{ strtoupper(substr($customer->name, 0, 1)) }}
                                 </div>
                             @endif
                             <a href="{{ route('profile.edit') }}" class="edit-avatar-badge" data-bs-toggle="tooltip" title="Edit Profil">
@@ -55,8 +55,8 @@
                             </a>
                         </div>
 
-                        <h4 class="fw-bold text-primary-rk mb-1">{{ $customer->customerName }}</h4>
-                        <p class="text-muted small mb-3">{{ $customer->customerEmail }}</p>
+                        <h4 class="fw-bold text-primary-rk mb-1">{{ $customer->name }}</h4>
+                        <p class="text-muted small mb-3">{{ $customer->email }}</p>
                         
                         <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-light border">
                             <i class="icofont-badge text-accent-rk"></i> 
@@ -98,7 +98,7 @@
                                     <div class="info-icon bg-blue-light text-primary-rk"><i class="icofont-user-alt-3"></i></div>
                                     <div class="info-content">
                                         <label>Nama Lengkap</label>
-                                        <p>{{ $customer->customerName }}</p>
+                                        <p>{{ $customer->name }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -109,7 +109,7 @@
                                     <div class="info-icon bg-pink-light text-accent-rk"><i class="icofont-email"></i></div>
                                     <div class="info-content">
                                         <label>Alamat Email</label>
-                                        <p>{{ $customer->customerEmail }}</p>
+                                        <p>{{ $customer->email }}</p>
                                     </div>
                                 </div>
                             </div>

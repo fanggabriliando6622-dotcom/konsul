@@ -235,11 +235,36 @@ class DokterController extends Controller
             // Context system instruction
             $doctorName = $chat->dokter ? $chat->dokter->dokterName : 'Dokter';
             $specialty  = $chat->dokter ? $chat->dokter->namaBidang : 'Umum';
-            $systemPrompt = "Anda adalah {$doctorName}, seorang dokter spesialis {$specialty}. 
-            Jawab pertanyaan pasien dengan ramah, profesional, dan medis namun mudah dipahami. 
-            Jawab singkat dan padat. Jika pertanyaan di luar medis, arahkan kembali ke konsultasi kesehatan.";
+            
+            $systemPrompt = "Anda adalah {$doctorName}, Dokter Spesialis {$specialty}. Anda sedang berada di ruang chat online dengan pasien.
+
+ATURAN STRICT:
+1. HANYA JAWAB sesuai spesialisasi {$specialty}. Jika pasien bertanya di luar spesialisasi Anda (misal tentang mental/overthinking padahal Anda BUKAN psikiater/psikolog), TOLAK DENGAN TEGAS: 'Maaf, itu di luar ranah saya sebagai Spesialis {$specialty}.'
+2. JAWAB SANGAT SINGKAT. Maksimal 2 atau 3 kalimat saja.
+3. DILARANG KERAS membuat daftar (list), artikel panjang, atau poin-poin. Cukup jawab dalam format percakapan chat sehari-hari.
+4. Jangan keluar dari konteks pembicaraan. Tanyakan 1 pertanyaan diagnostik singkat jika perlu.";
+
+            // Ambil 10 percakapan terakhir agar AI ingat konteks dialog
+            $history = ChatMessage::where('chatDokterId', $chatDokterId)
+                ->orderBy('created_at', 'desc')
+                ->take(10)
+                ->get()
+                ->reverse();
+
+            $apiMessages = [
+                ['role' => 'system', 'content' => $systemPrompt]
+            ];
+
+            foreach ($history as $msg) {
+                $role = ($msg->sender_type === 'dokter') ? 'assistant' : 'user';
+                $apiMessages[] = [
+                    'role' => $role,
+                    'content' => $msg->message
+                ];
+            }
+
             // Send to AI
-            $response = \Illuminate\Support\Facades\Http::timeout(30)
+            $response = \Illuminate\Support\Facades\Http::timeout(15)
                 ->withHeaders([
                     'Authorization' => 'Bearer ' . env('OPENROUTER_API_KEY'),
                     'Content-Type'  => 'application/json',
@@ -247,29 +272,52 @@ class DokterController extends Controller
                     'X-Title'       => 'RuangKonsul Doctor AI'
                 ])
                 ->post(env('OPENROUTER_API_ENDPOINT', 'https://openrouter.ai/api/v1/') . 'chat/completions', [
-                    'model' => 'stepfun/step-3.5-flash:free',
-                    'messages' => [
-                        ['role' => 'system', 'content' => $systemPrompt],
-                        ['role' => 'user', 'content' => $request->message]
-                    ]
+                    'models' => [
+                        'google/gemma-3-27b-it:free',
+                        'meta-llama/llama-3.3-70b-instruct:free',
+                        'openrouter/free'
+                    ],
+                    'route' => 'fallback',
+                    'messages' => $apiMessages
                 ]);
             if ($response->status() === 200) {
                 $data = $response->json();
                 $replyContent = $data['choices'][0]['message']['content'] ?? 'Maaf, saya sedang memeriksa pasien lain. Mohon tunggu sebentar.';
-                // Save Doctor Reply
-                $doctorReplyMessage = ChatMessage::create([
-                    'chatDokterId' => $chatDokterId,
-                    'customerId'   => $customer->customerId,
-                    'dokterId'     => $chat->dokterId,
-                    'message'      => $replyContent,
-                    'sender_type'  => 'dokter',
-                    'chat_type'    => 'doctor',
-                    'created_at'   => now()
-                ]);
+            } else {
+                \Illuminate\Support\Facades\Log::error("OpenRouter API Failed in DokterController (HTTP {$response->status()}): " . $response->body());
+                if ($response->status() === 429) {
+                    $replyContent = 'Maaf, karena antrean konsultasi saat ini sedang sangat padat/sibuk, AI saya harus jeda sejenak. Silakan ulangi ketik beberapa saat lagi, ya.';
+                } elseif ($response->status() === 401) {
+                    $replyContent = 'Mohon maaf, API Key layanan AI saat ini tidak valid. Harap hubungi admin.';
+                } else {
+                    $replyContent = 'Mohon maaf, respons otomatis AI sedang mengalami gangguan jaringan (Error ' . $response->status() . '). Sebagai dokter asli Anda, saya akan membalas secara manual sesaat lagi.';
+                }
             }
+
+            // Save Doctor Reply
+            $doctorReplyMessage = ChatMessage::create([
+                'chatDokterId' => $chatDokterId,
+                'customerId'   => $customer->customerId,
+                'dokterId'     => $chat->dokterId,
+                'message'      => $replyContent,
+                'sender_type'  => 'dokter',
+                'chat_type'    => 'doctor',
+                'created_at'   => now()
+            ]);
+
         } catch (\Exception $e) {
-            // Silent fail or log error
-            // \Log::error("AI Doctor Error: " . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error("AI Doctor Error: " . $e->getMessage());
+            
+            // Fallback if HTTP request totally fails
+            $doctorReplyMessage = ChatMessage::create([
+                'chatDokterId' => $chatDokterId,
+                'customerId'   => $customer->customerId,
+                'dokterId'     => $chat->dokterId,
+                'message'      => 'Mohon maaf, sistem AI dokter sedang offline. Mohon tunggu balasan manual saya.',
+                'sender_type'  => 'dokter',
+                'chat_type'    => 'doctor',
+                'created_at'   => now()
+            ]);
         }
         return response()->json([
             'success' => true,

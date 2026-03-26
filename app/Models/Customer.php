@@ -11,7 +11,7 @@ class Customer extends Authenticatable
 
     public $incrementing = false;
     protected $keyType = 'string';
-    public $timestamps = false; // karena tabel tidak ada created_at & updated_at
+    public $timestamps = false; 
 
     protected static function boot()
     {
@@ -28,9 +28,9 @@ class Customer extends Authenticatable
 
     protected $fillable = [
         'customerId',
-        'customerName',
-        'customerEmail',
-        'customerPassword',
+        'name',
+        'email',
+        'password',
         'alamat',
         'customerNoTelp',
         'customerJenisKelamin',
@@ -38,23 +38,14 @@ class Customer extends Authenticatable
     ];
 
     protected $hidden = [
-        'customerPassword',
-        'remember_token', // jika nanti kamu pakai remember me
+        'password',
+        'remember_token',
     ];
 
-    /**
-     * Supaya Laravel tahu email login pakai kolom customerEmail
-     */
-    public function getAuthIdentifierName()
+    protected function casts(): array
     {
-        return 'customerEmail';
-    }
-
-    /**
-     * Supaya Laravel tahu password pakai kolom customerPassword
-     */
-    public function getAuthPassword()
-    {
-        return $this->customerPassword;
+        return [
+            'password' => 'hashed',
+        ];
     }
 }

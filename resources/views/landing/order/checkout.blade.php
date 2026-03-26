@@ -287,7 +287,7 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold">Nama Penerima</label>
-                                    <input type="text" class="form-control ck-input" name="nama_penerima" value="{{ old('nama_penerima', $customer->customerName) }}" required placeholder="Nama lengkap penerima">
+                                    <input type="text" class="form-control ck-input" name="nama_penerima" value="{{ old('nama_penerima', $customer->name) }}" required placeholder="Nama lengkap penerima">
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-bold">No. Telepon</label>
@@ -310,7 +310,7 @@
                         @foreach($cartItems as $item)
                         <div class="ck-product">
                             <div class="ck-product-img">
-                                <img src="{{ asset('storage/' . ($item->produk->gambar ?? '')) }}" alt="{{ $item->produk->produkName ?? '' }}">
+                                <img src="{{ asset($item->produk->gambar ?? 'images/produk/logo.png') }}" alt="{{ $item->produk->produkName ?? '' }}">
                             </div>
                             <div class="ck-product-name">
                                 {{ $item->produk->produkName ?? 'Produk' }}
@@ -366,8 +366,8 @@
                             <!-- Kartu Kredit/Debit Detail -->
                             <div class="ck-pay-detail" id="detail-kartu">
                                 <label class="small fw-bold mb-2 d-block">Informasi Kartu</label>
-                                <div class="row g-2">
-                                    <div class="col-12">
+                                <div class="row g-3">
+                                    <div class="col-12 mb-1">
                                         <input type="text" class="form-control ck-input" placeholder="Nomor Kartu (16 digit)" maxlength="19">
                                     </div>
                                     <div class="col-6">

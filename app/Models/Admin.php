@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Admin extends Authenticatable
+class Admin extends Authenticatable implements FilamentUser
 {
     protected $table = 'admin';
     protected $primaryKey = 'adminId';
@@ -14,16 +16,28 @@ class Admin extends Authenticatable
 
     protected $fillable = [
         'adminId',
-        'adminName',
-        'adminEmail',
-        'adminPassword',
-        'adminAge',
+        'name',
+        'email',
+        'password',
     ];
 
-    protected $hidden = ['adminPassword'];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function getAuthPassword()
+    /**
+     * Filament access control
+     */
+    public function canAccessPanel(Panel $panel): bool
     {
-        return $this->adminPassword;
+        return true; 
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
     }
 }

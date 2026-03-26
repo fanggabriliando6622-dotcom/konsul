@@ -13,9 +13,10 @@ return new class extends Migration
     {
        Schema::create('customer', function (Blueprint $table) {
     $table->string('customerId', 50)->primary();
-    $table->string('customerName', 100)->nullable();
-    $table->string('customerEmail', 50)->nullable();
-    $table->string('customerPassword', 255)->nullable();
+    $table->string('name', 100)->nullable();
+    $table->string('email', 50)->nullable();
+    $table->string('password', 255)->nullable();
+
     $table->string('alamat', 100)->nullable();
     $table->string('customerNoTelp', 20)->nullable();
     $table->enum('customerJenisKelamin', ['Laki-laki', 'Perempuan'])->nullable();

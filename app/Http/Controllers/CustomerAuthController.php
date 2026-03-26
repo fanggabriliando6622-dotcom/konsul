@@ -34,9 +34,10 @@ class CustomerAuthController extends Controller
         ]);
 
         $credentials = [
-            'customerEmail' => $request->email,
-            'password'      => $request->password,
+            'email'    => $request->email,
+            'password' => $request->password,
         ];
+
 
         if (Auth::guard('customer')->attempt($credentials)) {
 
@@ -60,8 +61,9 @@ class CustomerAuthController extends Controller
     {
         $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:customer,customerEmail',
+            'email'    => 'required|email|unique:customer,email',
             'password' => 'required|min:6|confirmed',
+
             'phone'    => 'nullable|string|max:20',
             'address'  => 'nullable|string',
             'gender'   => 'nullable|in:Laki-laki,Perempuan',
@@ -74,13 +76,14 @@ class CustomerAuthController extends Controller
 
         $customer = Customer::create([
             'customerId'            => $customerId,
-            'customerName'          => $request->name,
-            'customerEmail'         => $request->email,
-            'customerPassword'      => Hash::make($request->password),
+            'name'                  => $request->name,
+            'email'                 => $request->email,
+            'password'              => Hash::make($request->password),
             'alamat'                => $request->address,
             'customerNoTelp'        => $request->phone,
             'customerJenisKelamin'  => $request->gender,
         ]);
+
 
         // Auto login setelah register
         Auth::guard('customer')->login($customer);
@@ -135,21 +138,23 @@ class CustomerAuthController extends Controller
 
         $request->validate([
             'name'    => 'required|string|max:255',
-            'email'   => 'required|email|unique:customer,customerEmail,' . $customer->customerId . ',customerId',
+            'email'   => 'required|email|unique:customer,email,' . $customer->customerId . ',customerId',
             'phone'   => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'gender'  => 'nullable|in:Laki-laki,Perempuan',
+
             'avatar'  => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'nullable|min:6|confirmed',
         ]);
 
         $updateData = [
-            'customerName'          => $request->name,
-            'customerEmail'         => $request->email,
+            'name'                  => $request->name,
+            'email'                 => $request->email,
             'alamat'                => $request->address,
             'customerNoTelp'        => $request->phone,
             'customerJenisKelamin'  => $request->gender,
         ];
+
 
         // Handle file upload untuk avatar
         if ($request->hasFile('avatar')) {
@@ -167,8 +172,9 @@ class CustomerAuthController extends Controller
 
         // Hanya update password jika ada input password baru
         if ($request->filled('password')) {
-            $updateData['customerPassword'] = Hash::make($request->password);
+            $updateData['password'] = Hash::make($request->password);
         }
+
 
         $customer->update($updateData);
 

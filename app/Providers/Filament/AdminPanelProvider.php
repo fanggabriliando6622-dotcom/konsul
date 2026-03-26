@@ -28,6 +28,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->authGuard('admin')
+
             ->brandName('RuangKonsul Admin')
             ->colors([
                 'primary' => Color::Sky,

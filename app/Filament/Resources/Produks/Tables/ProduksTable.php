@@ -30,6 +30,26 @@ class ProduksTable
                     ->disk('public')        // ✅ ambil dari storage/app/public
                     ->width(60)
                     ->height(60),           // ✅ hapus ->directory(), path sudah tersimpan lengkap di DB
+                TextColumn::make('deskripsi')
+                    ->label('Deskripsi')
+                    ->limit(50)
+                    ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('kegunaan')
+                    ->label('Kegunaan')
+                    ->limit(50)
+                    ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('dosis')
+                    ->label('Dosis')
+                    ->limit(50)
+                    ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('efek_samping')
+                    ->label('Efek Samping')
+                    ->limit(50)
+                    ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('Tanggal_Kadaluwarsa')
                     ->label('Tgl Kadaluwarsa')
                     ->date()

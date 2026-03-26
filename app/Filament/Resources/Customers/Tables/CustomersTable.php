@@ -16,11 +16,14 @@ class CustomersTable
             ->columns([
                 TextColumn::make('customerId')
                     ->searchable(),
-                TextColumn::make('customerName')
+                TextColumn::make('name')
+
                     ->searchable(),
-                TextColumn::make('customerEmail')
+                TextColumn::make('email')
+
                     ->searchable(),
-                TextColumn::make('customerPassword')
+                TextColumn::make('password')
+
                     ->searchable(),
                 TextColumn::make('alamat')
                     ->searchable(),

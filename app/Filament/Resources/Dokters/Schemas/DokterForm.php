@@ -44,7 +44,8 @@ class DokterForm
                     ->default(0),
                 Select::make('adminId')
                     ->label('Admin')
-                    ->options(fn () => \Illuminate\Support\Facades\DB::table('admin')->pluck('adminName', 'adminId'))
+                    ->options(fn () => \Illuminate\Support\Facades\DB::table('admin')->pluck('name', 'adminId'))
+
                     ->required()
                     ->searchable(),
             ]);

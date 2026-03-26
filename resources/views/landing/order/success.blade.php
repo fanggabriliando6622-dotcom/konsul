@@ -239,8 +239,7 @@
                                     <div class="product-item-sm">
                                         @php
                                             $prodImg = $detail->produk->gambar ?? '';
-                                            $finalProdImg = file_exists(public_path($prodImg)) ? asset($prodImg) : asset('storage/' . $prodImg);
-                                            if(empty($prodImg)) $finalProdImg = asset('images/placeholder.png');
+                                            $finalProdImg = !empty($prodImg) && file_exists(public_path($prodImg)) ? asset($prodImg) : asset('images/produk/logo.png');
                                         @endphp
                                         <img src="{{ $finalProdImg }}" alt="" class="product-img-sm">
                                         <div class="product-info-sm flex-grow-1">
