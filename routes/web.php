@@ -193,4 +193,10 @@ Route::get('/artikel/kesehatan-tubuh-mental', [LandingController::class, 'kstubu
 Route::get('/artikel/nutrisi', [LandingController::class, 'nutrisi'])->name('artikel.nutrisi');
 Route::get('/artikel/mental', [LandingController::class, 'mental'])->name('artikel.mental');
 Route::get('/artikel/gaya', [LandingController::class, 'gaya'])->name('artikel.gaya');
-
+Route::get('/fix', function () {
+    Artisan::call('session:table');
+    Artisan::call('migrate', ['--force' => true]);
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    return 'Selesai: ' . Artisan::output();
+});
