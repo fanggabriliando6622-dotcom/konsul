@@ -200,3 +200,19 @@ Route::get('/fix', function () {
     Artisan::call('cache:clear');
     return 'Selesai: ' . Artisan::output();
 });
+Route::get('/debug', function () {
+    try {
+        DB::connection()->getPdo();
+        $dbStatus = 'DB OK';
+    } catch (\Exception $e) {
+        $dbStatus = 'DB ERROR: ' . $e->getMessage();
+    }
+    
+    return response()->json([
+        'db' => $dbStatus,
+        'session_driver' => config('session.driver'),
+        'cache_store' => config('cache.default'),
+        'app_key' => config('app.key') ? 'SET' : 'NOT SET',
+        'tables' => DB::select('SHOW TABLES'),
+    ]);
+});
