@@ -442,6 +442,7 @@
 </div>
 
 @push('scripts')
+<script src="{{ config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" data-client-key="{{ $midtransClientKey }}"></script>
 <script>
 function selectPayment(btn) {
     // Remove active from all buttons
@@ -487,23 +488,62 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.innerHTML = '<i class="icofont-spinner-alt-1"></i> Memproses...';
         loader.classList.add('show');
 
-        // Step 1: Processing animation (2s)
-        setTimeout(function() {
-            title.textContent = 'Verifikasi Pembayaran...';
-            desc.textContent = 'Menghubungkan ke gateway pembayaran.';
-        }, 800);
+        // Prepare FormData
+        var formData = new FormData(form);
 
-        // Step 2: Success state (2.5s)
-        setTimeout(function() {
-            loader.classList.add('ck-loader-success');
-            title.textContent = 'Pembayaran Berhasil!';
-            desc.textContent = 'Pesanan Anda sedang disiapkan.';
-        }, 2200);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.snap_token) {
+                // Hide loader before popup
+                loader.classList.remove('show');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="icofont-check-circled"></i> Buat Pesanan';
 
-        // Step 3: Submit form (3.2s)
-        setTimeout(function() {
-            form.submit();
-        }, 3200);
+                // Trigger Snap popup
+                window.snap.pay(data.snap_token, {
+                    onSuccess: function(result) {
+                        // Optional: trigger manual status verification for local dev
+                        fetch("/payment/verify/" + data.order_id)
+                        .then(() => {
+                            window.location.href = "{{ route('order.history') }}";
+                        });
+                    },
+                    onPending: function(result) {
+                        fetch("/payment/verify/" + data.order_id)
+                        .then(() => {
+                            window.location.href = "{{ route('order.history') }}";
+                        });
+                    },
+                    onError: function(result) {
+                        alert("Pembayaran gagal!");
+                        console.log(result);
+                    },
+                    onClose: function() {
+                        alert('Anda menutup pop-up sebelum menyelesaikan pembayaran.');
+                    }
+                });
+            } else if (data.error) {
+                alert(data.error);
+                loader.classList.remove('show');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="icofont-check-circled"></i> Buat Pesanan';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Terjadi kesalahan sistem.");
+            loader.classList.remove('show');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="icofont-check-circled"></i> Buat Pesanan';
+        });
     });
 });
 </script>

@@ -26,7 +26,7 @@
     </svg>
 </div>
 
-<section class="section py-5 bg-light" style="margin-top: -60px; position: relative; z-index: 10;">
+<section class="section py-5 bg-light" style="margin-top: -60px;">
     <div class="container">
         <div class="row">
             

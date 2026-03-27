@@ -64,7 +64,7 @@
     </svg>
 </div>
 
-<section class="section appointment-page py-5" style="background: #f8fafd; margin-top: -60px; position: relative; z-index: 10;">
+<section class="section appointment-page py-5" style="background: #f8fafd; margin-top: -60px;">
     <div class="container">
         <!-- ===== SECTION 1: UPCOMING ===== -->
         <div class="row align-items-center mb-4 rk-reveal rk-up">

@@ -9,6 +9,8 @@ use App\Models\Pembayaran;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Midtrans\Config;
+use Midtrans\Snap;
 
 class OrderController extends Controller
 {
@@ -29,12 +31,13 @@ class OrderController extends Controller
                 ->with('error', 'Keranjang Anda kosong.');
         }
 
-        // Hitung total harga
         $total = $cartItems->sum(function($item){
             return ($item->produk->price ?? 0) * $item->qty;
         });
 
-        return view('landing.order.checkout', compact('cartItems', 'total', 'customer'));
+        $midtransClientKey = config('midtrans.client_key');
+
+        return view('landing.order.checkout', compact('cartItems', 'total', 'customer', 'midtransClientKey'));
     }
 
     /**
@@ -131,15 +134,48 @@ class OrderController extends Controller
             'amount' => $total,
             'metodePembayaran' => $request->metodePembayaran,
             'date' => date('Y-m-d'),
-            'status' => 'paid'
+            'status' => 'pending'
         ]);
 
-        // Hapus cart items customer ini
-        Cart::where('customerId', $customer->customerId)->delete();
+        // Konfigurasi Midtrans
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production');
+        Config::$isSanitized = true;
+        Config::$is3ds = true;
 
-        // Redirect ke halaman sukses
-        return redirect()->route('order.success', ['pemesananId' => $pemesananId])
-            ->with('success', 'Pemesanan berhasil dibuat! Silakan lanjutkan pembayaran.');
+        $params = [
+            'transaction_details' => [
+                'order_id' => $pemesananId,
+                'gross_amount' => (int)$total,
+            ],
+            'customer_details' => [
+                'first_name' => $request->nama_penerima,
+                'email' => $customer->email ?? $customer->username . '@example.com', // Opsional, sesuaikan field email di tabel customer
+                'phone' => $request->no_telp_penerima,
+            ],
+            // 'enabled_payments' => ['credit_card', 'gopay', 'shopeepay', 'permata_va', 'bca_va', 'bni_va', 'bri_va', 'other_va'], // Opsional
+        ];
+
+        try {
+            // Hapus cart items customer ini sebelum redirect (atau tunggu callback, tapi biasanya dihapus saat order dibuat)
+            Cart::where('customerId', $customer->customerId)->delete();
+
+            $snapToken = Snap::getSnapToken($params);
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'snap_token' => $snapToken,
+                    'order_id' => $pemesananId
+                ]);
+            }
+
+            return redirect()->route('order.success', $pemesananId)->with('snap_token', $snapToken);
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            }
+            return back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
+        }
     }
 
     /**

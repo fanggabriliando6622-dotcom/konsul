@@ -11,6 +11,7 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FormAppointmentController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -220,3 +221,8 @@ Route::get('/debug', function () {
         'password_baru' => 'password123',
     ]);
 });
+
+
+Route::get('/bayar', [PaymentController::class, 'createTransaction']);
+Route::post('/midtrans-notification', [PaymentController::class, 'notification'])->name('midtrans.notification');
+Route::get('/payment/verify/{orderId}', [PaymentController::class, 'verifyStatus'])->name('payment.verify');

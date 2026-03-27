@@ -10,7 +10,7 @@
 /* --- Page Hero (replaces old page-title bg-1) --- */
 .rk-hero {
     position: relative;
-    padding: 160px 0 100px;
+    padding: 140px 0 100px;
     background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #223a66 100%);
     overflow: hidden;
     font-family: 'Inter', sans-serif;
@@ -245,7 +245,6 @@
 .rk-reveal.rk-scale { transform: scale(0.85); }
 .rk-reveal.rk-visible {
     opacity: 1;
-    transform: translateY(0) translateX(0) scale(1);
 }
 .rk-stagger { transition-delay: calc(var(--s, 0) * 0.12s); }
 
@@ -257,7 +256,7 @@
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
-    .rk-hero { padding: 130px 0 80px; }
+    .rk-hero { padding: 120px 0 80px; }
     .rk-hero h1 { font-size: 32px; }
     .rk-hero-desc { font-size: 15px; }
     .rk-section-hdr h2 { font-size: 28px; }
@@ -278,7 +277,7 @@
 }
 /* --- Detail Page Hero & Content --- */
 .rk-hero-detail {
-    padding: 160px 0 100px;
+    padding: 140px 0 100px;
     background: var(--rk-theme-bg, linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #223a66 100%));
     color: #fff;
     text-align: center;
