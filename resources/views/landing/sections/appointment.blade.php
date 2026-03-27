@@ -89,6 +89,7 @@
         color: #adb5bd;
         font-size: 18px;
         flex-shrink: 0;
+        pointer-events: none;
     }
     .input-icon-wrapper .form-control-rk {
         border: none !important;
@@ -204,6 +205,15 @@
         box-shadow: 0 8px 25px rgba(225, 36, 84, 0.3);
         color: white;
     }
+    .input-icon-wrapper.border-danger {
+        border-color: #dc3545 !important;
+        background-color: rgba(220, 53, 69, 0.05) !important;
+    }
+    .text-danger {
+        color: #dc3545 !important;
+        font-size: 13px;
+        font-weight: 600;
+    }
     .btn-outline-rk {
         border: 2px solid var(--rk-primary);
         color: var(--rk-primary);
@@ -261,13 +271,13 @@
         @if(session('success'))
             <div class="row justify-content-center">
                 <div class="col-lg-10 mb-4">
-                    <div class="alert alert-success border-0 shadow-sm rounded-4 d-flex align-items-center p-4">
-                        <div class="rounded-circle bg-success text-white p-2 d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                            <i class="icofont-check-alt fs-5"></i>
+                    <div class="alert alert-success border-0 shadow-lg rounded-4 d-flex align-items-center p-4" style="background-color: #28a745 !important; opacity: 1 !important;">
+                        <div class="rounded-circle bg-white text-success p-2 d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="icofont-check-alt fs-5" style="color: #28a745;"></i>
                         </div>
-                        <div>
-                            <h6 class="mb-0 fw-bold">Berhasil!</h6>
-                            <span>{{ session('success') }}</span>
+                        <div class="text-white">
+                            <h6 class="mb-0 fw-bold text-white">Berhasil!</h6>
+                            <span class="text-white">Appointment berhasil dibuat!</span>
                         </div>
                     </div>
                 </div>
@@ -294,49 +304,72 @@
                                 <div class="row g-4 pt-2">
                                     <div class="col-12">
                                         <label class="form-label-rk">Identitas Pasien</label>
-                                        <div class="input-icon-wrapper">
+                                        <div class="input-icon-wrapper @error('namaPasien') border-danger @enderror">
                                             <i class="icofont-id-card"></i>
-                                            <input type="text" class="form-control form-control-rk fw-bold" value="{{ auth()->guard('customer')->user()->name }}" readonly>
+                                            <input type="text" name="namaPasien" class="form-control form-control-rk fw-bold" value="{{ old('namaPasien', auth()->guard('customer')->user()->name) }}" placeholder="Masukkan Nama Pasien..." required>
                                         </div>
+                                        @error('namaPasien')
+                                            <small class="text-danger fw-bold ms-2">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
 
                                     <div class="col-12">
                                         <label class="form-label-rk">Dokter Spesialis</label>
-                                        <div class="input-icon-wrapper">
+                                        <div class="input-icon-wrapper @error('dokterId') border-danger @enderror">
                                             <i class="icofont-doctor-alt"></i>
                                             <select name="dokterId" class="form-control form-control-rk" required>
                                                 <option value="" disabled selected>Pilih Dokter...</option>
                                                 @foreach($dokters as $dokter)
-                                                    <option value="{{ $dokter->dokterId }}">
+                                                    <option value="{{ $dokter->dokterId }}" {{ old('dokterId') == $dokter->dokterId ? 'selected' : '' }}>
                                                         {{ $dokter->dokterName }} @if($dokter->namaBidang) — Spesialis {{ $dokter->namaBidang }} @endif
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
+                                        @error('dokterId')
+                                            <small class="text-danger fw-bold ms-2">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
 
                                     <div class="col-md-6">
                                         <label class="form-label-rk">Tanggal Konsultasi</label>
-                                        <div class="input-icon-wrapper">
+                                        <div class="input-icon-wrapper @error('date') border-danger @enderror">
                                             <i class="icofont-calendar"></i>
-                                            <input name="date" type="date" class="form-control form-control-rk" required min="{{ date('Y-m-d') }}">
+                                            <input name="date" type="date" id="appointmentDate" class="form-control form-control-rk" required value="{{ old('date') }}">
                                         </div>
+                                        @error('date')
+                                            <small class="text-danger fw-bold ms-2">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
+
 
                                     <div class="col-md-6">
                                         <label class="form-label-rk">Waktu / Jam</label>
-                                        <div class="input-icon-wrapper">
+                                        <div class="input-icon-wrapper @error('time') border-danger @enderror">
                                             <i class="icofont-clock-time"></i>
-                                            <input name="time" type="time" class="form-control form-control-rk" required>
+                                            <input name="time" type="time" id="appointmentTime" class="form-control form-control-rk" required value="{{ old('time') }}" step="60">
                                         </div>
+                                        @error('time')
+                                            <small class="text-danger fw-bold ms-2">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
+
 
                                     <div class="col-12">
                                         <label class="form-label-rk">Keluhan / Pesan Tambahan</label>
-                                        <div class="input-icon-wrapper">
-                                            <textarea name="pesan" class="form-control form-control-rk" rows="4" placeholder="Jelaskan kebutuhan konsultasi atau keluhan singkat Anda..."></textarea>
+                                        <div class="input-icon-wrapper @error('pesan') border-danger @enderror" style="align-items: flex-start; padding-top: 12px;">
+                                            <i class="icofont-chat" style="margin-top: 4px;"></i>
+                                            <textarea name="pesan" class="form-control form-control-rk" rows="4" placeholder="Jelaskan kebutuhan konsultasi atau keluhan singkat Anda...">{{ old('pesan') }}</textarea>
                                         </div>
+                                        @error('pesan')
+                                            <small class="text-danger fw-bold ms-2">{{ $message }}</small>
+                                        @enderror
                                     </div>
+
 
                                     <div class="col-12 mt-5">
                                         <button type="submit" class="btn btn-main-rk w-100 py-3">
@@ -436,7 +469,18 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Set min date for the appointment to today (local time)
+    const dateInput = document.getElementById('appointmentDate');
+    if (dateInput) {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        dateInput.min = yyyy + '-' + mm + '-' + dd;
+    }
+
     const revealEls = document.querySelectorAll('.rk-reveal');
+
     const revealObs = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {

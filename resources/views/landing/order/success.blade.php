@@ -239,7 +239,14 @@
                                     <div class="product-item-sm">
                                         @php
                                             $prodImg = $detail->produk->gambar ?? '';
-                                            $finalProdImg = !empty($prodImg) && file_exists(public_path($prodImg)) ? asset($prodImg) : asset('images/produk/logo.png');
+                                            $finalProdImg = asset('images/produk/logo.png');
+                                            if ($prodImg) {
+                                                if (file_exists(public_path($prodImg))) {
+                                                    $finalProdImg = asset($prodImg);
+                                                } elseif (file_exists(storage_path('app/public/' . $prodImg))) {
+                                                    $finalProdImg = asset('storage/' . $prodImg);
+                                                }
+                                            }
                                         @endphp
                                         <img src="{{ $finalProdImg }}" alt="" class="product-img-sm">
                                         <div class="product-info-sm flex-grow-1">
@@ -291,7 +298,7 @@
                                 <a href="{{ route('order.history') }}" class="btn btn-main-rk">
                                     <i class="icofont-history me-2"></i> Pantau Pesanan Saya
                                 </a>
-                                <a href="{{ route('home') }}" class="btn btn-outline-rk">
+                                <a href="{{ route('produk.index') }}" class="btn btn-outline-rk">
                                     Kembali Belanja
                                 </a>
                             </div>

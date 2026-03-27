@@ -18,6 +18,9 @@ class FormAppointmentsTable
                     ->searchable(),
                 TextColumn::make('customerId')
                     ->searchable(),
+                TextColumn::make('namaPasien')
+                    ->label('Nama Pasien')
+                    ->searchable(),
                 TextColumn::make('dokterId')
                     ->searchable(),
                 TextColumn::make('date')

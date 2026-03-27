@@ -44,8 +44,12 @@
         opacity: 1;
     }
     .breadcrumb-item-rk.active {
-        color: white;
+        background: white;
+        padding: 4px 14px;
+        border-radius: 50px;
+        color: #e12454 !important;
         font-weight: 700;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     /* --- Product Card Premium --- */
@@ -242,9 +246,9 @@
                 <ol class="breadcrumb justify-content-center breadcrumb-rk mb-0" style="background:transparent;padding:0;">
                     <li class="breadcrumb-item-rk"><a href="{{ route('home') }}">Beranda</a></li>
                     <li class="breadcrumb-item-rk mx-2">/</li>
-                    <li class="breadcrumb-item-rk"><a href="{{ route('landing.dokter.kategori') }}">Produk Kesehatan</a></li>
+                    <li class="breadcrumb-item-rk"><a href="{{ route('produk.index') }}">Produk Kesehatan</a></li>
                     <li class="breadcrumb-item-rk mx-2">/</li>
-                    <li class="breadcrumb-item-rk active" style="color:#e12454;">{{ $kategori->kategoriName }}</li>
+                    <li class="breadcrumb-item-rk active">{{ $kategori->kategoriName }}</li>
                 </ol>
             </nav>
         </div>
@@ -269,8 +273,18 @@
                         <div class="product-image-container">
                             @php
                                 $prodImg = $produk->gambar ?? '';
-                                if ($prodImg && file_exists(public_path($prodImg))) {
-                                    $finalImg = asset($prodImg);
+                                if ($prodImg) {
+                                    // 1. Cek di folder public langsung (untuk aset statis)
+                                    if (file_exists(public_path($prodImg))) {
+                                        $finalImg = asset($prodImg);
+                                    } 
+                                    // 2. Cek di folder storage (punya Filament)
+                                    elseif (file_exists(storage_path('app/public/' . $prodImg))) {
+                                        $finalImg = asset('storage/' . $prodImg);
+                                    }
+                                    else {
+                                        $finalImg = asset('images/produk/logo.png');
+                                    }
                                 } else {
                                     $finalImg = asset('images/produk/logo.png');
                                 }

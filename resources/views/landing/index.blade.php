@@ -82,7 +82,7 @@
     display:inline-flex;align-items:center;gap:8px;
     background:rgba(255,255,255,.07);
     backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,.1);
+    border:2px solid rgba(255,255,255,.1);
     padding:8px 20px;border-radius:50px;
     color:rgba(255,255,255,.85);
     font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
@@ -171,10 +171,10 @@
 .hp-hero-stat {
     position:absolute;
     background:rgba(255,255,255,.12);
-    backdrop-filter:blur(16px);
+    backdrop-filter:blur(100px);
     border:1px solid rgba(255,255,255,.15);
     border-radius:16px;padding:16px 20px;
-    color:#fff;
+    color:white;
     z-index:3;
     animation: hp-fadeUp 1s ease .7s both;
 }
@@ -914,7 +914,7 @@
         <div class="hp-highlight-grid">
 
             <div class="hp-hl-card reveal reveal-up hp-tilt stagger-item" style="--stagger:0">
-                <div class="hp-hl-icon"><i class="icofont-heartbeat"></i></div>
+                <div class="hp-hl-icon"><i class="icofont-pills"></i></div>
                 <span>Produk Kesehatan Terpadu</span>
                 <h4>Alat dan Produk Kesehatan</h4>
                 <p>RuangKonsul menyediakan berbagai produk kesehatan mencakup kesehatan mental, kesehatan seksual, parenting, gaya hidup sehat, pengelolaan penyakit kronis, serta gizi dan nutrisi.</p>

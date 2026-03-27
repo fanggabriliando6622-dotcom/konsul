@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Cart;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -46,7 +48,11 @@ class CustomerAuthController extends Controller
             // Set a one-time flag to show a welcome greeting on the next page
             $request->session()->flash('welcome', true);
 
+            // MERGE GUEST CART
+            $this->mergeCart($request);
+
             return redirect()->intended('/');
+
         }
 
         return back()->withErrors([
@@ -93,7 +99,11 @@ class CustomerAuthController extends Controller
         // Set welcome flag for freshly-registered users
         $request->session()->flash('welcome', true);
 
+        // MERGE GUEST CART
+        $this->mergeCart($request);
+
         return redirect('/');
+
     }
 
     // =========================
@@ -182,4 +192,35 @@ class CustomerAuthController extends Controller
                         ->with('success', 'Profil berhasil diperbarui!');
     }
 
+    // =========================
+    // MERGE GUEST CART TO DB
+    // =========================
+    private function mergeCart(Request $request)
+    {
+        $customer = Auth::guard('customer')->user();
+        $guestCart = $request->session()->get('cart', []);
+
+        foreach ($guestCart as $produkId => $item) {
+            $qty = $item['quantity'];
+            
+            // Check if product already exists in DB cart for this customer
+            $existing = Cart::where('customerId', $customer->customerId)
+                            ->where('produkId', $produkId)
+                            ->first();
+
+            if ($existing) {
+                $existing->update(['qty' => $existing->qty + $qty]);
+            } else {
+                Cart::create([
+                    'customerId' => $customer->customerId,
+                    'produkId' => $produkId,
+                    'qty' => $qty
+                ]);
+            }
+        }
+
+        // Clear guest cart after merge
+        $request->session()->forget('cart');
+    }
 }
+

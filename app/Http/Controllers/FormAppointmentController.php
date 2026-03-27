@@ -17,13 +17,25 @@ class FormAppointmentController extends Controller
             return redirect()->route('login');
         }
 
-        $appointments = FormAppointment::with('dokter')
+        $allAppointments = FormAppointment::with('dokter')
             ->where('customerId', auth()->guard('customer')->user()->customerId)
             ->orderBy('date', 'desc')
             ->orderBy('time', 'desc')
             ->get();
 
-        return view('landing.customer.appointments', compact('appointments'));
+        $now = now();
+        
+        // UPCOMING: Future date/time
+        $upcomingAppointments = $allAppointments->filter(function($app) use ($now) {
+            return \Carbon\Carbon::parse($app->date . ' ' . $app->time)->isFuture();
+        })->values();
+
+        // HISTORY: Past date/time
+        $pastAppointments = $allAppointments->filter(function($app) use ($now) {
+            return \Carbon\Carbon::parse($app->date . ' ' . $app->time)->isPast();
+        })->values();
+
+        return view('landing.customer.appointments', compact('upcomingAppointments', 'pastAppointments'));
     }
 
     // Menampilkan form
@@ -45,6 +57,7 @@ class FormAppointmentController extends Controller
 
         // Validasi input
         $request->validate([
+            'namaPasien' => 'required|string|max:225',
             'dokterId' => 'required|exists:dokter,dokterId',
             'date' => 'required|date|after_or_equal:today',
             'time' => 'required',
@@ -55,6 +68,7 @@ class FormAppointmentController extends Controller
         FormAppointment::create([
             'appointmentId' => Str::upper(Str::random(5)), // generate ID unik
             'customerId' => auth()->guard('customer')->user()->customerId,
+            'namaPasien' => $request->namaPasien,
             'dokterId' => $request->dokterId,
             'date' => $request->date,
             'time' => $request->time,
