@@ -14,19 +14,19 @@ return new class extends Migration
     if (! Schema::hasTable('carts')) {
         Schema::create('carts', function (Blueprint $table) {
         $table->id();
-        $table->string('customerId');
-        $table->string('produkId');
+        $table->string('customerId', 50);
+        $table->string('produkId', 5);
         $table->integer('qty')->default(1);
         $table->timestamps();
 
         $table->foreign('customerId')
               ->references('customerId')
-              ->on('customers')
+              ->on('customer')
               ->onDelete('cascade');
 
         $table->foreign('produkId')
               ->references('produkId')
-              ->on('produks')
+              ->on('produkALKES')
               ->onDelete('cascade');
         });
     }
