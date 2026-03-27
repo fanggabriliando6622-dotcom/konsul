@@ -40,6 +40,9 @@
         box-shadow: 0 4px 20px rgba(0,42,106,0.04);
         border: 1px dashed rgba(0,0,0,0.1);
     }
+    .rk-hero-inner{
+        padding: 15px;
+    }
 </style>
 
 <!-- ===== HERO ===== -->
