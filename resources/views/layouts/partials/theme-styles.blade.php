@@ -10,7 +10,7 @@
 /* --- Page Hero (replaces old page-title bg-1) --- */
 .rk-hero {
     position: relative;
-    padding: 140px 0 100px;
+    padding: 160px 0 100px;
     background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #223a66 100%);
     overflow: hidden;
     font-family: 'Inter', sans-serif;
@@ -72,10 +72,10 @@
     gap: 8px;
     background: rgba(255,255,255,0.07);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,1);
     padding: 8px 20px;
     border-radius: 50px;
-    color: rgba(255,255,255,0.85);
+    color: rgba(255,255,255,1);
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 1.5px;
@@ -257,7 +257,7 @@
 
 /* --- Responsive --- */
 @media (max-width: 768px) {
-    .rk-hero { padding: 120px 0 80px; }
+    .rk-hero { padding: 130px 0 80px; }
     .rk-hero h1 { font-size: 32px; }
     .rk-hero-desc { font-size: 15px; }
     .rk-section-hdr h2 { font-size: 28px; }
@@ -278,7 +278,7 @@
 }
 /* --- Detail Page Hero & Content --- */
 .rk-hero-detail {
-    padding: 140px 0 100px;
+    padding: 160px 0 100px;
     background: var(--rk-theme-bg, linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #223a66 100%));
     color: #fff;
     text-align: center;
@@ -323,7 +323,7 @@
     gap: 8px;
     background: rgba(255,255,255,0.08);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.12);
     padding: 8px 22px;
     border-radius: 50px;
     color: rgba(255,255,255,0.9);

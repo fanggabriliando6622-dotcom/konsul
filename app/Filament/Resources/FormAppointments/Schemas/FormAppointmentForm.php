@@ -15,6 +15,9 @@ class FormAppointmentForm
             ->components([
                 TextInput::make('customerId')
                     ->default(null),
+                TextInput::make('namaPasien')
+                    ->label('Nama Pasien')
+                    ->default(null),
                 TextInput::make('dokterId')
                     ->default(null),
                 DatePicker::make('date'),

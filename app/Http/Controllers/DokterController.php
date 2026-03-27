@@ -236,18 +236,21 @@ class DokterController extends Controller
             $doctorName = $chat->dokter ? $chat->dokter->dokterName : 'Dokter';
             $specialty  = $chat->dokter ? $chat->dokter->namaBidang : 'Umum';
             
-            $systemPrompt = "Anda adalah {$doctorName}, Dokter Spesialis {$specialty}. Anda sedang berada di ruang chat online dengan pasien.
-
-ATURAN STRICT:
-1. HANYA JAWAB sesuai spesialisasi {$specialty}. Jika pasien bertanya di luar spesialisasi Anda (misal tentang mental/overthinking padahal Anda BUKAN psikiater/psikolog), TOLAK DENGAN TEGAS: 'Maaf, itu di luar ranah saya sebagai Spesialis {$specialty}.'
-2. JAWAB SANGAT SINGKAT. Maksimal 2 atau 3 kalimat saja.
-3. DILARANG KERAS membuat daftar (list), artikel panjang, atau poin-poin. Cukup jawab dalam format percakapan chat sehari-hari.
-4. Jangan keluar dari konteks pembicaraan. Tanyakan 1 pertanyaan diagnostik singkat jika perlu.";
-
-            // Ambil 10 percakapan terakhir agar AI ingat konteks dialog
+            $systemPrompt = "### IDENTITAS
+            Nama Dokter: {$doctorName}
+            Spesialisasi: {$specialty}
+            Platform: RuangKonsul AI Assistant
+            
+            ### ATURAN UTAMA (WAJIB DIIKUTI)
+            1. CEK SPESIALISASI MUTLAK: Sebelum merespons, evaluasi pesan pasien. Jika pasien membahas kesehatan mental, gejala psikologis (seperti overthinking, depresi, cemas berlebih, ketakutan emosional), atau penyakit fisik yang BUKAN ranah {$specialty}, Anda DILARANG KERAS memberikan saran medis atau bertanya balik.
+            2. PENOLAKAN & RUJUKAN: Jawab dalam 2 kalimat saja dengan format: 'Maaf, sebagai Dokter Spesialis {$specialty}, keluhan tersebut (misal: masalah kesehatan mental) berada di luar keahlian saya. Saya sangat menyarankan Anda untuk berkonsultasi dengan Dokter Spesialis Kesehatan Mental (Psikiater atau Psikolog) di RuangKonsul agar mendapatkan penanganan yang tepat.'
+            3. DIALOG ALAMI (Hanya Bidang Sendiri): Jika pertanyaan pasien MEMANG dalam ranah {$specialty}, baru gunakan gaya bicara yang ramah, dialogis, interaktif, dan berikan respon singkat yang menenangkan.
+            4. DILARANG MEMBERI HARAPAN: Jangan katakan 'Saya di sini untuk membantu' jika keluhan sudah di luar bidang Anda.";
+            
+            // Ambil 15 percakapan terakhir agar AI ingat konteks dialog lebih lama
             $history = ChatMessage::where('chatDokterId', $chatDokterId)
                 ->orderBy('created_at', 'desc')
-                ->take(10)
+                ->take(15)
                 ->get()
                 ->reverse();
 
@@ -282,15 +285,15 @@ ATURAN STRICT:
                 ]);
             if ($response->status() === 200) {
                 $data = $response->json();
-                $replyContent = $data['choices'][0]['message']['content'] ?? 'Maaf, saya sedang memeriksa pasien lain. Mohon tunggu sebentar.';
+                $replyContent = $data['choices'][0]['message']['content'] ?? 'Halo, maaf saya sedang memeriksa catatan medis sebentar. Apa yang bisa saya bantu lagi?';
             } else {
                 \Illuminate\Support\Facades\Log::error("OpenRouter API Failed in DokterController (HTTP {$response->status()}): " . $response->body());
                 if ($response->status() === 429) {
-                    $replyContent = 'Maaf, karena antrean konsultasi saat ini sedang sangat padat/sibuk, AI saya harus jeda sejenak. Silakan ulangi ketik beberapa saat lagi, ya.';
+                    $replyContent = 'Maaf, saat ini antrean pasien di poli sedang sangat padat. Saya akan segera membalas konsultasi Anda dalam beberapa saat. Harap tunggu ya.';
                 } elseif ($response->status() === 401) {
-                    $replyContent = 'Mohon maaf, API Key layanan AI saat ini tidak valid. Harap hubungi admin.';
+                    $replyContent = 'Terjadi kendala teknis pada sistem konsultasi kami. Mohon hubungi admin RuangKonsul untuk bantuan segera.';
                 } else {
-                    $replyContent = 'Mohon maaf, respons otomatis AI sedang mengalami gangguan jaringan (Error ' . $response->status() . '). Sebagai dokter asli Anda, saya akan membalas secara manual sesaat lagi.';
+                    $replyContent = 'Maaf, sinyal di ruang periksa saya sedang kurang stabil. Saya sedang berusaha membalas pesan Anda. Mohon tunggu sebentar.';
                 }
             }
 
@@ -313,7 +316,7 @@ ATURAN STRICT:
                 'chatDokterId' => $chatDokterId,
                 'customerId'   => $customer->customerId,
                 'dokterId'     => $chat->dokterId,
-                'message'      => 'Mohon maaf, sistem AI dokter sedang offline. Mohon tunggu balasan manual saya.',
+                'message'      => 'Halo, maaf tadi koneksi saya sempat terputus. Boleh tolong ulangi pertanyaan terakhir Anda? Saya siap membantu kembali.',
                 'sender_type'  => 'dokter',
                 'chat_type'    => 'doctor',
                 'created_at'   => now()

@@ -145,13 +145,21 @@ Route::middleware('auth:customer')->group(function () {
 
     Route::get('/appointment-schedule', [FormAppointmentController::class, 'index'])->name('appointment.schedule');
 
-    Route::get('/cart', [CartController::class,'index'])->name('cart.index');
-    Route::post('/cart/add', [CartController::class,'add'])->name('cart.add');
-    Route::post('/cart/update/{id}', [CartController::class,'update'])->name('cart.update');
-    Route::delete('/cart/remove/{id}', [CartController::class,'destroy'])->name('cart.remove');
+    // Route::get('/cart', [CartController::class,'index'])->name('cart.index');
+    // Route::post('/cart/add', [CartController::class,'add'])->name('cart.add');
+    // Route::post('/cart/update/{id}', [CartController::class,'update'])->name('cart.update');
+    // Route::delete('/cart/remove/{id}', [CartController::class,'destroy'])->name('cart.remove');
+
 
     
 });
+
+// CART ROUTES (Accessible by both guests and auth users)
+Route::get('/cart', [CartController::class,'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class,'add'])->name('cart.add');
+Route::post('/cart/update/{id}', [CartController::class,'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class,'destroy'])->name('cart.remove');
+
 
 
 

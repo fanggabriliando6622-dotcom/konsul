@@ -123,7 +123,14 @@
                                     <div class="d-flex align-items-center gap-3">
                                         @php
                                             $prodImg = $item->produk->gambar ?? '';
-                                            $finalImg = !empty($prodImg) && file_exists(public_path($prodImg)) ? asset($prodImg) : asset('images/produk/logo.png');
+                                            $finalImg = asset('images/produk/logo.png');
+                                            if ($prodImg) {
+                                                if (file_exists(public_path($prodImg))) {
+                                                    $finalImg = asset($prodImg);
+                                                } elseif (file_exists(storage_path('app/public/' . $prodImg))) {
+                                                    $finalImg = asset('storage/' . $prodImg);
+                                                }
+                                            }
                                         @endphp
                                         <div style="flex-shrink:0;">
                                             <img src="{{ $finalImg }}" class="cart-product-img">

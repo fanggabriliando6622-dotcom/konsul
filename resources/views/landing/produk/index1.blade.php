@@ -14,7 +14,7 @@
     <div class="container">
         <div class="rk-hero-inner">
             <div class="rk-hero-badge">
-                <i class="icofont-heartbeat"></i> Produk
+                <i class="icofont-pills"></i> Produk
             </div>
             <h1>Produk Kesehatan <span>RuangKonsul</span></h1>
             <p class="rk-hero-desc">Beragam solusi kesehatan terpercaya untuk mendukung kesejahteraan mental, fisik, dan keluarga Anda.</p>

@@ -25,6 +25,7 @@ class FormAppointment extends Model
     protected $fillable = [
         'appointmentId',
         'customerId',
+        'namaPasien',
         'dokterId',
         'date',
         'time',
