@@ -32,6 +32,8 @@ class Customer extends Authenticatable
         'email',
         'password',
         'alamat',
+        'latitude',
+        'longitude',
         'customerNoTelp',
         'customerJenisKelamin',
         'avatar',

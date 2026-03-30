@@ -29,7 +29,9 @@ class Pemesanan extends Model
         'totalPrice',
         'nama_penerima',
         'no_telp_penerima',
-        'alamat_pengiriman'
+        'alamat_pengiriman',
+        'latitude',
+        'longitude',
     ];
 
     // Nonaktifkan timestamp jika tabel tidak punya created_at & updated_at

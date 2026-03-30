@@ -133,11 +133,22 @@
                                             </div>
                                         </div>
 
-                                        <!-- Address -->
+                                        <!-- Address with Location Picker -->
                                         <div class="col-12">
                                             <div class="form-group custom-input">
-                                                <label class="form-label small text-muted fw-bold">Alamat Lengkap (Domisili)</label>
-                                                <textarea name="address" class="form-control" rows="3" placeholder="Masukkan alamat pengiriman utama Anda">{{ old('address', $customer->alamat) }}</textarea>
+                                                <label class="form-label small text-muted fw-bold">
+                                                    <i class="icofont-map text-accent-rk me-1"></i> ALAMAT LENGKAP (DOMISILI)
+                                                </label>
+                                                <x-location-picker 
+                                                    inputName="address"
+                                                    latName="latitude"
+                                                    lngName="longitude"
+                                                    :address="old('address', $customer->alamat ?? '')"
+                                                    :latitude="old('latitude', $customer->latitude ?? '')"
+                                                    :longitude="old('longitude', $customer->longitude ?? '')"
+                                                    mapId="profileMap"
+                                                    placeholder="Cari alamat domisili Anda..."
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -160,6 +171,8 @@
 </section>
 
 @push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="{{ asset('css/location-picker.css') }}">
 <style>
     :root {
         --rk-primary: #223a66;
@@ -261,6 +274,8 @@
 @endpush
 
 @push('scripts')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ asset('js/location-picker.js') }}"></script>
 <script>
     function previewImage(input) {
         var placeholder = document.getElementById('avatarPlaceholder');
@@ -276,6 +291,19 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+    // Init Location Picker for profile edit
+    document.addEventListener('DOMContentLoaded', function() {
+        var profilePicker = new LocationPicker({
+            mapId: 'profileMap',
+            lat: {{ $customer->latitude ?? -6.2 }},
+            lng: {{ $customer->longitude ?? 106.816666 }},
+            zoom: {{ ($customer->latitude) ? 16 : 13 }},
+        });
+
+        // Invalidate map size after tab/accordion transitions
+        setTimeout(function() { profilePicker.invalidateSize(); }, 300);
+    });
 </script>
 @endpush
 @endsection

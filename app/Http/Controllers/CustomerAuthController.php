@@ -161,6 +161,8 @@ class CustomerAuthController extends Controller
             'name'                  => $request->name,
             'email'                 => $request->email,
             'alamat'                => $request->address,
+            'latitude'              => $request->latitude,
+            'longitude'             => $request->longitude,
             'customerNoTelp'        => $request->phone,
             'customerJenisKelamin'  => $request->gender,
         ];

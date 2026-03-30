@@ -87,6 +87,8 @@ class OrderController extends Controller
             'nama_penerima' => $request->nama_penerima,
             'no_telp_penerima' => $request->no_telp_penerima,
             'alamat_pengiriman' => $request->alamat_pengiriman,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ]);
 
         // Generate dan buat detail pemesanan untuk setiap item
